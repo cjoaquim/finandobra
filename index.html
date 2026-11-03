@@ -239,7 +239,8 @@ tr.agg td{color:var(--muted);font-style:italic}
 .auth-links{margin-top:12px;gap:6px;flex-wrap:wrap}
 #who{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px;overflow-wrap:anywhere}
 nav a[hidden]{display:none!important}
-.pl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:14px}.pl-grid .card{margin:0}.pl-card{display:flex;flex-direction:column;gap:6px}.pl-card .row{margin-top:auto}.pl-cur{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}.pl-preco{font-family:var(--mono);font-size:22px;font-weight:500}.pl-preco small{font-size:13px;color:var(--muted)}
+.pl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:14px}.pl-grid .card{margin:0}.pl-card{display:flex;flex-direction:column;gap:6px}.pl-card .row{margin-top:auto}.pl-cur{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}.pl-ins a{color:var(--accent);font-weight:600;text-decoration:underline;overflow-wrap:anywhere}
+.pl-preco{font-family:var(--mono);font-size:22px;font-weight:500}.pl-preco small{font-size:13px;color:var(--muted)}
 </style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0D6A57">
@@ -869,6 +870,16 @@ function plPodeCriar(){
   if(n>=p.max_empresas){toast('O plano '+p.nome+' permite '+p.max_empresas+' empresa'+(p.max_empresas>1?'s':'')+'. Para criar mais, mude de plano em «Plano e pagamento».');location.hash='#plano';return false;}
   return true;
 }
+
+/* Instruções de pagamento: ligações e emails clicáveis (o texto é escapado antes; só http/https e mailto) */
+function ligar(txt,ref){
+  return esc(txt).replace(/(https?:\/\/[^\s<]+[^\s<.,;:!?)\]])|(\bwww\.[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[^\s<]*[^\s<.,;:!?)\]])?)|([A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,})/gi,(m,url,www,mail)=>{
+    if(url)return '<a href="'+url+'" target="_blank" rel="noopener noreferrer">'+url+'</a>';
+    if(www)return '<a href="https://'+www+'" target="_blank" rel="noopener noreferrer">'+www+'</a>';
+    const sub=ref?'?subject='+encodeURIComponent('Comprovativo de pagamento '+ref):'';
+    return '<a href="mailto:'+mail+sub+'">'+mail+'</a>';
+  });
+}
 function vPlano(){
   const top='<div class="top"><div><h2>Plano e pagamento</h2><div class="muted small">Escolha o pacote da FinanDobra. A ativação é feita depois de confirmado o pagamento.</div></div></div>';
   if(store.kind!=='sb')return top+'<div class="card"><p style="margin:0">Os planos estão disponíveis na versão com conta (com servidor). Nesta versão, tudo funciona sem limites, com os dados guardados neste navegador.</p></div>';
@@ -883,7 +894,7 @@ function vPlano(){
   const cur='<div class="card"><h3>O seu plano: '+esc(p.nome||'—')+'</h3><ul class="lst" style="margin-bottom:0"><li>Empresas: <b>'+nDono+' de '+(p.max_empresas||'—')+'</b> (empresas de que é dono)</li><li>Utilizadores por empresa: até <b>'+(p.max_utilizadores||'—')+'</b>, incluindo o dono</li><li>Exportação do SAF-T: <b>'+(p.oficial?'sim':'não')+'</b></li><li>Válido até: <b>'+(p.id==='formacao'?'sem prazo':dmy(s.valido_ate))+'</b></li></ul>'+aviso+'</div>';
   let ped='';
   if(s.pedido_plano){const pr=PL.precos.find(x=>x.plano_id===s.pedido_plano&&x.pais===s.pais);const ins=(PL.pag.find(x=>x.pais===s.pais)||{}).instrucoes||'Contacte a FinanDobra para saber como pagar.';const val=pr?(s.pedido_periodo==='anual'?pr.anual:pr.mensal):null;
-    ped='<div class="card" style="border-color:var(--accent)"><h3>Pedido à espera de pagamento</h3><div class="fields"><div><div class="small muted">Plano</div><b>'+esc(plNome(s.pedido_plano))+' · '+(s.pedido_periodo==='anual'?'anual':'mensal')+'</b></div><div><div class="small muted">Valor</div><b>'+(val!=null?esc(moneyC(val,pr.moeda)):'—')+'</b></div><div><div class="small muted">Referência</div><b class="num">'+esc(s.referencia||'')+'</b></div></div><h4 style="margin:14px 0 4px">Como pagar ('+esc(PAIS_NOME[s.pais]||s.pais)+')</h4><p style="margin:0;white-space:pre-line">'+esc(ins)+'</p><p class="small muted">Pedido feito em '+dmy(s.pedido_em)+'. A ativação é feita depois de confirmado o pagamento, normalmente em 1 dia útil.</p><button class="btn ghost sm" data-act="plCancel">Cancelar pedido</button></div>';}
+    ped='<div class="card" style="border-color:var(--accent)"><h3>Pedido à espera de pagamento</h3><div class="fields"><div><div class="small muted">Plano</div><b>'+esc(plNome(s.pedido_plano))+' · '+(s.pedido_periodo==='anual'?'anual':'mensal')+'</b></div><div><div class="small muted">Valor</div><b>'+(val!=null?esc(moneyC(val,pr.moeda)):'—')+'</b></div><div><div class="small muted">Referência</div><b class="num">'+esc(s.referencia||'')+'</b></div></div><h4 style="margin:14px 0 4px">Como pagar ('+esc(PAIS_NOME[s.pais]||s.pais)+')</h4><p style="margin:0;white-space:pre-line" class="pl-ins">'+ligar(ins,s.referencia)+'</p><p class="small muted">Pedido feito em '+dmy(s.pedido_em)+'. A ativação é feita depois de confirmado o pagamento, normalmente em 1 dia útil.</p><button class="btn ghost sm" data-act="plCancel">Cancelar pedido</button></div>';}
   const cards=(PL.planos||[]).map(x=>{const pr=PL.precos.find(y=>y.plano_id===x.id&&y.pais===pais);const atual=x.id===p.id;
     const preco=x.id==='formacao'?'<div class="pl-preco">Grátis</div>':pr?'<div class="pl-preco">'+esc(moneyC(pr.mensal,pr.moeda))+'<small> / mês</small></div><div class="small muted">ou '+esc(moneyC(pr.anual,pr.moeda))+' / ano'+(pr.anual<pr.mensal*12?' (poupa '+esc(moneyC(pr.mensal*12-pr.anual,pr.moeda))+')':'')+'</div>':'<div class="small muted">Sem preço definido para '+esc(PAIS_NOME[pais])+'.</div>';
     const bt=atual?'<span class="pill good">Plano atual</span>'+(x.id!=='formacao'&&pr?' <button class="btn sm" data-act="plPedir" data-p="'+x.id+'" data-per="anual">Renovar (anual)</button>':''):(x.id!=='formacao'&&pr?'<button class="btn pri sm" data-act="plPedir" data-p="'+x.id+'" data-per="mensal">Pedir · mensal</button> <button class="btn sm" data-act="plPedir" data-p="'+x.id+'" data-per="anual">Pedir · anual</button>':'');
@@ -1570,7 +1581,7 @@ function impGo(){
 }
 
 /* ============ Início (apresentação da app) ============ */
-const APP_VER='0.9 · 2 de novembro de 2026';
+const APP_VER='0.9.1 · 3 de novembro de 2026';
 const PAIS_RES={AO:'IVA 14 %, IRT, INSS, Imposto Industrial, SAF-T (AO)',PT:'IVA 23 %, IRS, Segurança Social, IRC, SAF-T (PT)',MZ:'IVA 16 %, IRPS, INSS, IRPC',BR:'DAS, INSS, IRRF, FGTS'};
 function demoPhrase(){const x=P().ex,v=n=>fmt(n*x.scale);return 'Vendi '+v(300000)+' ao cliente '+x.cli+' a crédito, custo '+v(180000);}
 function vInicio(){
