@@ -1,0 +1,83 @@
+FinanDobra 0.9 – Nível 3 (conta, equipas, planos e pagamentos)
+===============================================================
+
+FICHEIROS (publique os 9 juntos, sem mudar os nomes)
+  index.html, config.js, supabase.js, sw.js, manifest.webmanifest,
+  icon.svg, icon-192.png, icon-512.png, LEIA-ME.txt
+  config.js já tem o endereço e a chave PÚBLICA do seu projeto Supabase.
+
+ANTES DE PUBLICAR – no Supabase
+  1. SQL Editor > New query > cole finandobra-supabase.sql (versão 0.9) > Run.
+     Pode correr de novo: não estraga nada do que já existe (nem os
+     preços ou instruções que tiver alterado).
+  2. Authentication > URL Configuration:
+     - Site URL: o endereço do seu site
+       (ex.: https://o-seu-utilizador.github.io/finandobra/)
+     - Redirect URLs: acrescente o mesmo endereço.
+     Sem isto, os links de confirmação e de recuperação de palavra-passe
+     não voltam para a FinanDobra.
+
+PUBLICAR – GitHub Pages
+  Igual ao nível 2: repositório "finandobra" > carregar os ficheiros >
+  Settings > Pages > main / (root). Se já publicou o nível 2, substitua
+  os ficheiros pelos destes.
+
+PRIMEIRO TESTE (faça por esta ordem)
+  [ ] Abrir o site: aparece o ecrã "Entrar".
+  [ ] Criar conta com o seu email > confirmar no email > entrar.
+  [ ] Empresas > Nova empresa > com dados de exemplo.
+      Resultado de outubro de Angola = 186.000 Kz.
+  [ ] Recarregar a página: continua com sessão e com os dados.
+  [ ] No Supabase > Table Editor: ver a empresa em "empresas", o seu email
+      como "dono" em "membros" e as partes do livro em "documentos".
+  [ ] Convidar um segundo email (ex.: Lançador). Entrar com ele noutro
+      navegador: deve ver a empresa e conseguir lançar, mas não convidar
+      nem apagar a empresa.
+  [ ] Convidar um terceiro email como Consulta: deve só conseguir ver.
+
+PLANOS E PAGAMENTOS
+  Pacotes: Formação (grátis, 3 empresas de treino, 1 utilizador, sem SAF-T),
+  Essencial (1 empresa, 2 utilizadores), Profissional (3 empresas,
+  5 utilizadores), Gabinete (20 empresas, 10 utilizadores por empresa).
+  Os limites são aplicados no servidor.
+
+  O QUE TEM DE PREENCHER (Supabase > Table Editor):
+  - pagamento_info: substitua os dados entre [ ] (IBAN, Multicaixa
+    Express, MB WAY, M-Pesa, Pix, email/WhatsApp para comprovativos).
+  - precos: os valores são EXEMPLOS. Ajuste-os antes de vender.
+  - planos: pode mudar nomes, descrições e limites.
+  - admins: o email de quem ativa pagamentos (já está o seu).
+
+  COMO FUNCIONA UMA VENDA
+  1. O cliente abre "Plano e pagamento", escolhe o pacote e o país.
+  2. A app mostra o valor, as instruções de pagamento e uma referência
+     (ex.: FD-1A2B3C-1102).
+  3. O cliente paga e envia-lhe o comprovativo.
+  4. Você entra na app > "Administração" > "Ativar pedido".
+     O plano fica ativo por 1 mês ou 1 ano.
+  5. Antes do fim, a app avisa o cliente para renovar. Após o fim há 15
+     dias de tolerância; depois volta à Formação. Nada é apagado: as
+     empresas a mais ficam só para consulta até renovar.
+  Emita a fatura de cada pagamento num software de faturação certificado.
+
+PAPÉIS NESTA VERSÃO
+  Dono          – tudo, incluindo a equipa e apagar a empresa
+  Contabilista  – tudo, exceto gerir a equipa e apagar a empresa
+  Lançador      – registar e corrigir lançamentos e fechos
+  Aprovador     – só consultar (rascunhos e aprovação: próxima versão)
+  Consulta      – só consultar
+  As regras são aplicadas no servidor (Supabase), não só nos ecrãs.
+
+TRABALHO EM SIMULTÂNEO
+  Se duas pessoas alterarem a mesma empresa ao mesmo tempo, a segunda a
+  gravar recebe um aviso, vê as alterações da outra e repete a sua operação.
+  Nada é apagado sem aviso.
+
+LIMITES A CONHECER
+  - O envio de emails do Supabase gratuito permite poucos emails por hora.
+    Para muitos utilizadores, configure um serviço de email próprio
+    (Authentication > Emails > SMTP).
+  - Plano gratuito do Supabase: o projeto pausa após um período sem uso;
+    reative-o no painel. Para clientes reais, considere o plano pago.
+  - Continue a descarregar a cópia de segurança mensal (Empresas).
+  - Ainda não há rascunhos/aprovação nem anexos de documentos.
