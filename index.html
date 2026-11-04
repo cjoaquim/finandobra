@@ -1617,7 +1617,7 @@ function parseSaftInvoices(xml){
 function importPlan(d,opt){
   const have=new Set(S.entries.map(e=>e.doc).filter(Boolean));const rows=[];
   for(const v of d.invs){const isNC=v.type==='NC';const paid=['FR','FS','VD','TV'].includes(v.type);
-    let skip='';if(v.status==='A')skip='Anulado';else if(have.has(v.no))skip='Já registado (mesmo n.º)';else if(!v.date)skip='Sem data';else if(isClosed(v.date))skip='Mês fechado';
+    let skip='';if(v.status==='A')skip='Anulado';else if(v.dupBatch)skip='Repetido noutro ficheiro';else if(have.has(v.no))skip='Já registado (mesmo n.º)';else if(!v.date)skip='Sem data';else if(isClosed(v.date))skip='Mês fechado';
     const sg=isNC?-1:1,netP=Math.abs(v.netP),netS=Math.abs(v.netS),tax=Math.abs(v.tax),wht=Math.abs(v.wht),gross=Math.abs(v.gross)||r2(netP+netS+tax);
     const deb=paid?opt.caixa:'clients';const L=[];
     const recv=r2(gross-wht);
@@ -1625,14 +1625,49 @@ function importPlan(d,opt){
     else{if(netP>0)L.push({a:'sales',d:netP});if(netS>0)L.push({a:'services',d:netS});if(tax>0)L.push({a:'vatLiq',d:tax});if(wht>0)L.push({a:'taxProfit',c:wht});L.push({a:deb,c:recv,e:deb==='clients'?v.cliente:''});}
     const ok=entryOK(L).ok;if(!skip&&!ok)skip='Totais não batem certo';
     rows.push({kind:'inv',v,lines:L,skip,desc:(isNC?'Nota de crédito':paid?'Venda a pronto':'Venda')+' – '+v.cliente,tpl:isNC?'nc':'venda'});}
-  if(opt.pays)for(const p of d.pays){let skip='';if(p.status==='A')skip='Anulado';else if(have.has(p.no))skip='Já registado (mesmo n.º)';else if(isClosed(p.date))skip='Mês fechado';else if(!(p.gross>0))skip='Sem valor';
+  if(opt.pays)for(const p of d.pays){let skip='';if(p.status==='A')skip='Anulado';else if(p.dupBatch)skip='Repetido noutro ficheiro';else if(have.has(p.no))skip='Já registado (mesmo n.º)';else if(isClosed(p.date))skip='Mês fechado';else if(!(p.gross>0))skip='Sem valor';
     const meio=p.mech==='NU'?leaf('cash'):opt.banco;rows.push({kind:'pay',v:p,lines:[{a:meio,d:p.gross},{a:'clients',c:p.gross,e:p.cliente}],skip,desc:'Recebimento – '+p.cliente,tpl:'recebimento'});}
   return rows;
+}
+
+/* ---- Faturação: resumo por mês, comparação com a contabilidade, histórico e guia ---- */
+function impMonths(ok){
+  const m={};for(const r of ok){if(r.kind!=='inv')continue;const k=monthOf(r.v.date),sg=r.v.type==='NC'?-1:1;const x=m[k]=m[k]||{n:0,base:0,iva:0};x.n++;x.base+=sg*(Math.abs(r.v.netP)+Math.abs(r.v.netS));x.iva+=sg*Math.abs(r.v.tax);}
+  const ks=Object.keys(m).sort();if(!ks.length)return '';
+  return '<h4 style="margin:4px 0 6px">Resumo por mês</h4><div class="tbl-wrap" style="margin-bottom:12px"><table class="small"><thead><tr><th>Mês</th><th class="n">Documentos</th><th class="n">Base a importar</th><th class="n">IVA a importar</th><th class="n">IVA liquidado já na contabilidade</th><th class="n">IVA depois de importar</th></tr></thead><tbody>'+
+   ks.map(k=>{const x=m[k],ja=ivaLiqMes(k).total;return '<tr><td>'+esc(monthLabel(k))+'</td><td class="n">'+x.n+'</td><td class="n">'+fmt(x.base)+'</td><td class="n">'+fmt(x.iva)+'</td><td class="n">'+fmt(ja)+'</td><td class="n"><b>'+fmt(ja+x.iva)+'</b></td></tr>';}).join('')+'</tbody></table></div>';
+}
+// IVA liquidado e vendas de um mês, separando o que veio da faturação importada (sem contar o apuramento nem o fecho)
+function ivaLiqMes(k){
+  const from=k+'-01',to=monthEnd(k);let total=0,imp=0,vt=0,vi=0;
+  for(const e of S.entries){if(e.date<from||e.date>to||e.tpl==='apur_iva'||e.tpl==='apur_res')continue;
+    for(const l of e.lines){const b=base(l.a),v=(+l.c||0)-(+l.d||0);if(b==='vatLiq'){total+=v;if(e.imported)imp+=v;}if(b==='sales'||b==='services'){vt+=v;if(e.imported)vi+=v;}}}
+  return {total:r2(total),imp:r2(imp),vt:r2(vt),vi:r2(vi)};
+}
+function impRecon(){
+  const ms=[...new Set(S.entries.filter(e=>e.imported).map(e=>monthOf(e.date)))].sort().reverse().slice(0,12);
+  if(!ms.length)return '';
+  const rows=ms.map(k=>{const x=ivaLiqMes(k),dv=r2(x.vt-x.vi),di=r2(x.total-x.imp);const alert=Math.abs(dv)>0.5||Math.abs(di)>0.5;
+    return '<tr><td>'+esc(monthLabel(k))+'</td><td class="n">'+fmt(x.vi)+'</td><td class="n">'+fmt(x.vt)+'</td><td class="n'+(Math.abs(dv)>0.5?' err':'')+'">'+fmt(dv)+'</td><td class="n">'+fmt(x.imp)+'</td><td class="n">'+fmt(x.total)+'</td><td class="n'+(Math.abs(di)>0.5?' err':'')+'">'+fmt(di)+'</td><td>'+(alert?'<span style="color:var(--warn);font-weight:600">Rever</span>':'<span class="okmsg">✓</span>')+'</td></tr>';}).join('');
+  return '<div class="card"><h3>Faturação e contabilidade</h3><p class="hint" style="margin-top:0">Compara, mês a mês, o que veio do software de faturação com o total registado na contabilidade. Uma diferença quer dizer que há vendas ou IVA lançados à mão, sem fatura importada: confirme se existe a respetiva fatura.</p>'+
+   '<div class="tbl-wrap"><table class="small"><thead><tr><th>Mês</th><th class="n" title="Vendas e serviços nas faturas importadas">Vendas<br>faturação</th><th class="n" title="Vendas e serviços na contabilidade">Vendas<br>contabilidade</th><th class="n">Dif.</th><th class="n" title="IVA nas faturas importadas">IVA<br>faturação</th><th class="n" title="IVA liquidado na contabilidade">IVA<br>contabilidade</th><th class="n">Dif.</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+}
+function impHist(){
+  const H=S.imports||[];if(!H.length)return '';
+  return '<div class="card"><h3>Histórico de importações</h3><div class="tbl-wrap"><table class="small"><thead><tr><th>Data</th><th>Ficheiros</th><th>Período</th><th class="n">Documentos</th><th class="n">Base</th><th class="n">IVA</th></tr></thead><tbody>'+
+   H.slice(0,12).map(h=>'<tr><td class="num" style="text-align:left">'+esc(dateLabel(h.em.slice(0,10)))+'</td><td>'+esc(h.ficheiros)+'</td><td class="num" style="text-align:left">'+(h.de?esc(dateLabel(h.de))+' a '+esc(dateLabel(h.ate)):'—')+'</td><td class="n">'+h.n+'</td><td class="n">'+fmt(h.base)+'</td><td class="n">'+fmt(h.iva)+'</td></tr>').join('')+'</tbody></table></div><p class="small muted" style="margin-bottom:0">Os documentos já importados são reconhecidos pelo número e não entram duas vezes.</p></div>';
+}
+function impGuia(){
+  return '<div class="card"><h3>Como exportar o SAF-T de faturação</h3><p class="hint" style="margin-top:0">Exporte um ficheiro por mês. Os nomes dos menus podem variar com a versão e o país do programa.</p><ul class="lst">'+
+   '<li><b>Cegid Vendus:</b> no menu lateral do backoffice, <i>Autoridade Tributária › SAF-T › Exportar</i>; escolha o ano e o mês e descarregue o ficheiro.</li>'+
+   '<li><b>Cegid Primavera:</b> <i>Impostos › Ficheiros SAF-T</i>; crie o ficheiro com a finalidade de faturação, escolha o período e exporte.</li>'+
+   '<li><b>Cegid PHC e outros programas certificados:</b> procure a opção de exportação do SAF-T (AO ou PT) no módulo de faturação ou de impostos, e escolha "faturação" e o mês pretendido.</li>'+
+   '<li><b>Se o contabilista não tem acesso:</b> peça ao cliente para criar um utilizador de consulta para o contabilista no programa de faturação, ou para enviar o ficheiro .xml todos os meses.</li></ul></div>';
 }
 function vImportar(){
   if(S.pais==='BR')return '<div class="top"><div><h2>Importar faturação</h2></div></div><div class="card"><h3>Brasil</h3><p>No Brasil, as vendas são documentadas em NF-e, NFC-e e NFS-e (XML próprios, não SAF-T). A importação desses ficheiros ainda não está disponível. Por agora, registe as vendas em «Registar operação» ou com as frases do Painel.</p></div>';
   const head='<div class="top"><div><h2>Importar faturação (SAF-T)</h2><div class="muted small">Traga as faturas, notas de crédito e recibos emitidos no software de faturação certificado. O lançamento contabilístico é criado automaticamente.</div></div></div>';
-  let body='<div class="card"><h3>1. Escolher o ficheiro</h3><p class="hint" style="margin-top:0">Ficheiro SAF-T de faturação (.xml) exportado do Cegid Primavera, PHC, Vendus ou outro software certificado. Aceita SAF-T (AO) e SAF-T (PT).</p><input type="file" id="impFile" accept=".xml,text/xml,application/xml"> '+(imp&&imp.fileName?'<span class="small muted">'+esc(imp.fileName)+'</span>':'')+(imp&&imp.err?'<p class="err">'+esc(imp.err)+'</p>':'')+'</div>';
+  let body='<div class="card"><h3>1. Escolher o ficheiro</h3><p class="hint" style="margin-top:0">Ficheiro SAF-T de faturação (.xml) exportado do Cegid Primavera, PHC, Vendus ou outro software certificado. Aceita SAF-T (AO) e SAF-T (PT).</p><input type="file" id="impFile" multiple accept=".xml,text/xml,application/xml"> <span class="small muted">Pode escolher vários ficheiros de uma vez (por exemplo, um por mês).</span>'+(imp&&imp.files&&imp.files.length?'<div class="tbl-wrap" style="margin-top:10px"><table class="small"><thead><tr><th>Ficheiro</th><th>Empresa</th><th>NIF</th><th>Período</th><th class="n">Faturas</th><th class="n">Recibos</th></tr></thead><tbody>'+imp.files.map(f=>'<tr><td>'+esc(f.name)+'</td>'+(f.err?'<td colspan="5" class="err">'+esc(f.err)+'</td>':'<td>'+esc(f.nome||'—')+'</td><td class="num" style="text-align:left">'+esc(f.nif||'—')+(f.nif&&S.nif&&f.nif.replace(/\s/g,'')!==String(S.nif).replace(/\s/g,'')?' <span class="err">≠ empresa</span>':'')+'</td><td class="num" style="text-align:left">'+(f.de?dateLabel(f.de)+' a '+dateLabel(f.ate):'—')+'</td><td class="n">'+f.n+'</td><td class="n">'+f.np+'</td>')+'</tr>').join('')+'</tbody></table></div>':'')+(imp&&imp.err?'<p class="err">'+esc(imp.err)+'</p>':'')+'</div>';
   if(imp&&imp.d){const d=imp.d,o=imp.opt;const rows=importPlan(d,o);const ok=rows.filter(r=>!r.skip);
     const mism=d.nif&&S.nif&&d.nif.replace(/\s/g,'')!==String(S.nif).replace(/\s/g,'');
     const sum=(arr,f)=>arr.reduce((s,r)=>s+f(r),0);const invs=ok.filter(r=>r.kind==='inv');
@@ -1642,16 +1677,26 @@ function vImportar(){
       '<p class="hint">Produtos (tipo P) vão para '+esc(lab(leaf('sales')))+'; serviços (tipo S) para '+esc(lab(leaf('services')))+'. As retenções na fonte feitas pelos clientes vão para '+esc(lab(leaf('taxProfit')))+'. O custo das mercadorias vendidas não vem no SAF-T de faturação: lance-o no fim do mês a partir do inventário.</p></div>'+
       '<div class="card"><div class="row" style="margin-bottom:8px"><h3>3. Pré-visualização</h3><span class="spacer"></span><span class="small muted">'+ok.length+' a importar · '+(rows.length-ok.length)+' ignorados</span></div>'+
       '<div class="grid g4" style="margin-bottom:12px">'+kpi('Documentos a importar',String(ok.length),invs.length+' faturas/notas · '+(ok.length-invs.length)+' recibos')+kpi('Base tributável',fmt(sum(invs,r=>(r.v.type==='NC'?-1:1)*(Math.abs(r.v.netP)+Math.abs(r.v.netS)))),'vendas e serviços, líquido de notas de crédito')+kpi('IVA liquidado',fmt(sum(invs,r=>(r.v.type==='NC'?-1:1)*Math.abs(r.v.tax))),'a entregar ao Estado')+kpi('Ignorados',String(rows.length-ok.length),'anulados, duplicados ou em meses fechados')+'</div>'+
-      '<div class="tbl-wrap" style="max-height:420px;overflow:auto"><table class="small"><thead><tr><th>Documento</th><th>Data</th><th>Cliente</th><th class="n">Base</th><th class="n">IVA</th><th class="n">Total</th><th>Lançamento</th><th>Estado</th></tr></thead><tbody>'+
+      impMonths(ok)+'<div class="tbl-wrap" style="max-height:420px;overflow:auto"><table class="small"><thead><tr><th>Documento</th><th>Data</th><th>Cliente</th><th class="n">Base</th><th class="n">IVA</th><th class="n">Total</th><th>Lançamento</th><th>Estado</th></tr></thead><tbody>'+
       rows.map(r=>{const v=r.v,inv=r.kind==='inv';return '<tr'+(r.skip?' class="agg"':'')+'><td class="num" style="text-align:left">'+esc(v.no)+'</td><td class="num" style="text-align:left">'+esc(v.date?dateLabel(v.date):'')+'</td><td>'+esc(v.cliente)+'</td><td class="n">'+(inv?fmt(Math.abs(v.netP)+Math.abs(v.netS)):'')+'</td><td class="n">'+(inv?fmt(Math.abs(v.tax)):'')+'</td><td class="n">'+fmt(Math.abs(v.gross))+'</td><td class="small" style="font-family:var(--mono)">'+formula(leafLines(r.lines))+'</td><td>'+(r.skip?'<span style="color:var(--warn)">'+esc(r.skip)+'</span>':'<span class="okmsg">OK</span>')+'</td></tr>';}).join('')+'</tbody></table></div>'+
       '<div class="row" style="margin-top:12px"><button class="btn" data-act="impClear">Limpar</button><span class="spacer"></span><button class="btn pri" data-act="impGo"'+(ok.length?'':' disabled')+'>Importar '+ok.length+' documentos</button></div></div>';}
-  return head+body;
+  return head+body+impRecon()+impHist()+impGuia();
 }
-async function impLoad(file){
-  imp={fileName:file.name,opt:{caixa:leaf('cash'),banco:leaf('bank'),pays:true}};
-  try{if(file.size>20*1024*1024)throw new Error('Ficheiro demasiado grande (máximo 20 MB).');const t=await file.text();imp.d=parseSaftInvoices(t);
-    if(!imp.d.invs.length&&!imp.d.pays.length)throw new Error('O ficheiro não tem faturas (SalesInvoices) nem recibos (Payments).');}
-  catch(e){imp.err=e.message||'Não foi possível ler o ficheiro.';imp.d=null;}
+async function impLoad(files){
+  if(!Array.isArray(files))files=[files];
+  imp={fileName:files.map(f=>f.name).join(', '),files:[],opt:{caixa:leaf('cash'),banco:leaf('bank'),pays:true}};
+  const all={nif:'',nome:'',ver:'',pais:'',invs:[],pays:[]};const seenI=new Set(),seenP=new Set();
+  for(const f of files){const info={name:f.name,err:'',n:0,np:0,nif:'',nome:'',de:'',ate:''};
+    try{if(f.size>20*1024*1024)throw new Error('Ficheiro demasiado grande (máximo 20 MB).');const d=parseSaftInvoices(await f.text());
+      if(!d.invs.length&&!d.pays.length)throw new Error('Não tem faturas (SalesInvoices) nem recibos (Payments).');
+      Object.assign(info,{nif:d.nif,nome:d.nome,pais:d.pais,ver:d.ver,n:d.invs.length,np:d.pays.length});
+      const ds=[...d.invs,...d.pays].map(x=>x.date).filter(Boolean).sort();info.de=ds[0]||'';info.ate=ds[ds.length-1]||'';
+      if(!all.nif){Object.assign(all,{nif:d.nif,nome:d.nome,ver:d.ver,pais:d.pais});}
+      for(const v of d.invs){if(seenI.has(v.no)){v.dupBatch=1;}seenI.add(v.no);v.src=f.name;all.invs.push(v);}
+      for(const p of d.pays){if(seenP.has(p.no)){p.dupBatch=1;}seenP.add(p.no);p.src=f.name;all.pays.push(p);}
+    }catch(e){info.err=e.message||'Não foi possível ler o ficheiro.';}
+    imp.files.push(info);}
+  if(all.invs.length||all.pays.length)imp.d=all;else{imp.d=null;imp.err=imp.files.map(x=>x.name+': '+x.err).join(' · ');}
   render();
 }
 function impGo(){
@@ -1660,11 +1705,12 @@ function impGo(){
   for(const r of rows){const e={id:uid(),date:r.v.date,desc:r.desc,doc:r.v.no,tpl:r.tpl,imported:1,lines:leafLines(r.lines).filter(l=>+l.d>0||+l.c>0).map(l=>{const x={a:l.a};if(+l.d>0)x.d=r2(+l.d);if(+l.c>0)x.c=r2(+l.c);if(l.e)x.e=l.e;return x;})};
     S.entries.push(e);n++;if(r.v.nif&&r.v.cliente){for(const l of e.lines)if(l.e)sa.nifs[l.a+'|'+l.e]=r.v.nif;}}
   logA('Importação SAF-T faturação',n+' documentos de '+imp.fileName);
+  {const inv=rows.filter(r=>r.kind==='inv'),sg=r=>r.v.type==='NC'?-1:1;const ds=rows.map(r=>r.v.date).sort();S.imports=S.imports||[];S.imports.unshift({em:new Date().toISOString(),ficheiros:imp.fileName,n,de:ds[0],ate:ds[ds.length-1],base:r2(inv.reduce((t,r)=>t+sg(r)*(Math.abs(r.v.netP)+Math.abs(r.v.netS)),0)),iva:r2(inv.reduce((t,r)=>t+sg(r)*Math.abs(r.v.tax),0))});S.imports=S.imports.slice(0,60);}
   sel=latestMonth();imp=null;location.hash='#diario';commit(n+' documentos importados para o diário.');
 }
 
 /* ============ Início (apresentação da app) ============ */
-const APP_VER='0.10 · 4 de novembro de 2026';
+const APP_VER='0.11 · 4 de novembro de 2026';
 const PAIS_RES={AO:'IVA 14 %, IRT, INSS, Imposto Industrial, SAF-T (AO)',PT:'IVA 23 %, IRS, Segurança Social, IRC, SAF-T (PT)',MZ:'IVA 16 %, IRPS, INSS, IRPC',BR:'DAS, INSS, IRRF, FGTS'};
 function demoPhrase(){const x=P().ex,v=n=>fmt(n*x.scale);return 'Vendi '+v(300000)+' ao cliente '+x.cli+' a crédito, custo '+v(180000);}
 function vInicio(){
@@ -1775,7 +1821,7 @@ document.addEventListener('change',e=>{
   if(t.id==='exSel'){exYear=t.value;render();return;}
   if(t.dataset.ex){const v=parseAmount(String(t.value).replace('−','-'));if(isNaN(v))return toast('Valor inválido.');EX(exYear)[t.dataset.ex]=v;commit();return;}
   if(t.dataset.exb){EX(exYear)[t.dataset.exb]=t.checked;commit();return;}
-  if(t.id==='impFile'&&t.files&&t.files[0]){impLoad(t.files[0]);return;}
+  if(t.id==='impFile'&&t.files&&t.files.length){impLoad([...t.files]);return;}
   if(t.id==='impCx'&&imp){imp.opt.caixa=t.value;render();return;}
   if(t.id==='impBk'&&imp){imp.opt.banco=t.value;render();return;}
   if(t.id==='impPays'&&imp){imp.opt.pays=t.checked;render();return;}
