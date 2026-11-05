@@ -45,19 +45,20 @@ button,input,select,textarea{font:inherit;color:inherit}
 .muted{color:var(--muted)}
 .small{font-size:13px}
 
-.app{display:grid;grid-template-columns:220px 1fr;min-height:100%}
-.side{background:var(--surface);border-right:1px solid var(--rule);padding:20px 14px;display:flex;flex-direction:column;gap:18px;position:sticky;top:0;height:100vh;overflow-y:auto}
-.brand{display:flex;flex-direction:column;gap:2px;padding:0 6px}
+.app{display:grid;grid-template-columns:minmax(0,1fr);min-height:100%}
+.side{background:var(--surface);border-bottom:1px solid var(--rule);padding:10px 24px 0;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:'brand foot' 'nav nav';gap:6px 16px;align-items:center;position:sticky;top:0;z-index:30;box-shadow:0 1px 6px rgba(0,0,0,.04)}
+.brand{grid-area:brand;display:flex;flex-direction:row;align-items:center;flex-wrap:wrap;gap:4px 18px;padding:0;min-width:0}
+.brand label{margin-top:0!important;display:flex!important;flex-direction:row!important;align-items:center;gap:8px;white-space:nowrap;font-size:13px;color:var(--muted)}.brand select{width:auto;min-width:200px;max-width:280px}
 .brand small{color:var(--muted);font-size:12px}
 .mark{display:inline-flex;gap:3px;align-items:center}
 .mark i{display:block;width:10px;height:18px;border:2px solid var(--accent);border-radius:2px}
 .mark i+i{background:var(--accent)}
-nav{display:flex;flex-direction:column;gap:2px}
-nav a{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:6px;color:var(--ink);text-decoration:none;font-weight:500}
+nav{grid-area:nav;display:flex;flex-direction:row;flex-wrap:wrap;gap:2px;padding:2px 0 8px;min-width:0}
+nav a{display:flex;justify-content:space-between;align-items:center;padding:6px 11px;border-radius:6px;color:var(--ink);text-decoration:none;font-weight:500;font-size:14.5px;white-space:nowrap}
 nav a:hover{background:var(--accent-soft)}
 nav a[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
-nav a .k{font-family:var(--mono);font-size:11px;opacity:.6}
-.side .foot{margin-top:auto;display:flex;flex-direction:column;gap:10px;padding:0 6px}
+nav a .k{display:none}
+.side .foot{grid-area:foot;margin-top:0;display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px 14px;padding:0}
 
 main{padding:22px clamp(16px,3vw,36px) 60px;min-width:0;display:flex;flex-direction:column;gap:18px}
 .top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
@@ -177,8 +178,10 @@ td.code{font-family:var(--mono);color:var(--muted);width:44px}
   .app{grid-template-columns:minmax(0,1fr)}
   .side{min-width:0}
   nav{min-width:0;scrollbar-width:thin}
-  .side{position:static;height:auto;flex-direction:column;padding:12px 16px;gap:10px;border-right:none;border-bottom:1px solid var(--rule)}
-  nav{flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:4px}
+  .side{position:static;padding:12px 16px;gap:10px;grid-template-columns:minmax(0,1fr);grid-template-areas:'brand' 'nav' 'foot';box-shadow:none}
+  .brand select{min-width:0;max-width:none;flex:1}.brand label{flex:1 1 100%}
+  nav{flex-wrap:nowrap;overflow-x:auto;gap:4px;padding-bottom:4px}
+  .side .foot{justify-content:flex-start}
   nav a{white-space:nowrap}
   nav a .k{display:none}
   .side .foot{display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:0;padding:0}
@@ -231,15 +234,54 @@ tr.agg td{color:var(--muted);font-style:italic}
 .foot-in a{color:var(--accent)}
 @media (max-width:600px){.hero{padding:20px}.hero-t{font-size:28px}.hero-b .btn{width:100%}}
 .xml{font-family:var(--mono);font-size:12px;background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:12px;overflow:auto;max-height:420px;margin:0;white-space:pre}
-.auth{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:6vh 16px}
+.auth{position:fixed;inset:0;z-index:50;background:var(--bg);overflow:auto;padding:0;display:block}
+body.lp-on{overflow:hidden}
+.lp{min-height:100%;display:flex;flex-direction:column}
+.lp-in{max-width:1120px;margin:0 auto;padding:0 24px}
+.lp-top{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--rule)}
+.lp-top .lp-in{display:flex;align-items:center;gap:18px;min-height:64px;flex-wrap:wrap}
+.lp-logo{font-size:20px}
+.lp-nav{display:flex;gap:2px;flex:1;flex-wrap:wrap;grid-area:auto;padding:0;flex-direction:row}
+.lp-link{background:none;border:0;padding:8px 10px;border-radius:6px;font:inherit;font-weight:500;color:var(--ink);cursor:pointer}
+.lp-link:hover{background:var(--accent-soft)}
+.lp-hero{padding:64px 0 56px;background:linear-gradient(180deg,var(--accent-soft),var(--bg))}
+.lp-hero h1{font-size:44px;line-height:1.1;margin:8px 0 16px;max-width:820px}
+.lp-sub{font-size:18px;max-width:720px;color:var(--muted);margin:0 0 24px}
+.lp-eyebrow{font-weight:600;color:var(--accent);margin:0;letter-spacing:.02em}
+.lp-big{padding:12px 20px;font-size:16px}
+.lp-sec{padding:48px 0}.lp-alt{background:var(--surface);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.lp-sec h2{font-size:28px;margin:0 0 18px}
+.lp-grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.lp-grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.lp-card{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:20px;position:relative;display:flex;flex-direction:column;gap:6px}
+.lp-alt .lp-card{background:var(--bg)}
+.lp-card h3{margin:0 0 4px;font-size:17px}.lp-card p{margin:0;color:var(--muted)}
+.lp-plan .btn{margin-top:auto}.lp-plan ul{margin:6px 0 12px}
+.lp-dest{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.lp-tag{position:absolute;top:-11px;right:16px;background:var(--accent);color:var(--accent-ink);font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px}
+.lp-preco{font-family:var(--mono);font-size:24px;font-weight:500}.lp-preco small{font-size:13px;color:var(--muted)}
+.lp-mini{border:1px solid var(--rule);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:4px;background:var(--bg)}.lp-mini span{color:var(--muted);font-size:14px}
+.lp-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:0;margin:0;list-style:none;counter-reset:s}
+.lp-steps li{counter-increment:s;background:var(--bg);border:1px solid var(--rule);border-radius:12px;padding:20px 20px 20px 64px;position:relative;display:flex;flex-direction:column;gap:4px}
+.lp-steps li::before{content:counter(s);position:absolute;left:18px;top:18px;width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-weight:700}
+.lp-steps span{color:var(--muted)}
+.lp-foot{margin-top:auto;border-top:1px solid var(--rule);padding:22px 0;font-size:14px}.lp-foot .lp-in{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.lp-modal{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:8vh 16px;overflow:auto}
+.lp-modal-bg{position:fixed;inset:0;background:rgba(10,20,18,.45)}
+.lp-modal-box{position:relative;width:100%;max-width:420px}
+.lp-x{position:absolute;top:8px;right:10px;z-index:2;background:none;border:0;font-size:26px;line-height:1;cursor:pointer;color:var(--muted)}
+@media (max-width:900px){.lp-grid3,.lp-grid4,.lp-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.lp-nav{display:none}.lp-hero h1{font-size:34px}}
+@media (max-width:560px){.lp-grid3,.lp-grid4,.lp-steps{grid-template-columns:1fr}.lp-hero{padding:40px 0}.lp-hero h1{font-size:28px}.lp-acts{width:100%}.lp-acts .btn{flex:1}}
+
 .auth[hidden]{display:none}
 .auth-box{width:100%;max-width:400px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:24px}
 .auth-box h2{margin:18px 0 4px}
 .auth-form{display:grid;gap:12px;margin-top:12px}.auth-form input{padding:10px 12px;border:1px solid var(--rule);border-radius:8px;font:inherit;background:var(--bg);color:inherit}.auth-form label{display:grid;gap:4px}
 .auth-links{margin-top:12px;gap:6px;flex-wrap:wrap}
-#who{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px;overflow-wrap:anywhere}
+#who{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:0;overflow-wrap:anywhere}
 nav a[hidden]{display:none!important}
-.pl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:14px}.pl-grid .card{margin:0}.pl-card{display:flex;flex-direction:column;gap:6px}.pl-card .row{margin-top:auto}.pl-cur{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}.pl-preco{font-family:var(--mono);font-size:22px;font-weight:500}.pl-preco small{font-size:13px;color:var(--muted)}
+.pl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:14px}.pl-grid .card{margin:0}.pl-card{display:flex;flex-direction:column;gap:6px}.pl-card .row{margin-top:auto}.pl-cur{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}.pl-ins a{color:var(--accent);font-weight:600;text-decoration:underline;overflow-wrap:anywhere}
+.pl-preco{font-family:var(--mono);font-size:22px;font-weight:500}.pl-preco small{font-size:13px;color:var(--muted)}
 </style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0D6A57">
@@ -305,15 +347,15 @@ const A0=Object.fromEntries(ROLES.map(a=>[a.c,a]));let A=Object.assign({},A0);
 
 /* ============ Pacotes de país ============ */
 const PACKS={
- AO:{id:'AO',pais:'Angola',ref:'PGC – Plano Geral de Contabilidade (simplificado)',moeda:'AOA',iva:14,ssT:3,ssE:8,
+ AO:{id:'AO',pais:'Angola',ref:'PGC – Plano Geral de Contabilidade (simplificado; plano completo disponível)',moeda:'AOA',iva:14,ssT:3,ssE:8,
   wh:'IRT',whLong:'Imposto sobre o Rendimento do Trabalho (IRT)',ss:'INSS',irc:'Imposto Industrial',ircNota:'Taxa geral de 25 % sobre o lucro tributável.',
   ivaNota:'Taxa geral de IVA de 14 %.',R:'Proveitos',G:'Custos',RS:'proveito',GS:'custo',dr:'Demonstração de Resultados por naturezas',docs:'FT, FR, RC',
   cls:{1:'Meios fixos e investimentos',2:'Existências',3:'Terceiros',4:'Meios monetários',5:'Capital e reservas',6:'Proveitos e ganhos por natureza',7:'Custos e perdas por natureza',8:'Resultados'},
   acc:{fixed:['11.5','Equipamento administrativo'],dep:['18.1','Amortizações acumuladas – imobilizações corpóreas'],stock:['26.1','Mercadorias'],clients:['31.1','Clientes – correntes'],suppliers:['32.1','Fornecedores – correntes'],loans:['33.1','Empréstimos bancários'],
-   taxProfit:['34.1','Imposto sobre os lucros (Imposto Industrial)'],wh:['34.3','IRT – retenções na fonte'],vatDed:['34.5.1','IVA dedutível'],vatLiq:['34.5.2','IVA liquidado'],vatApur:['34.5.4','IVA apurado'],socSec:['34.8','Segurança Social (INSS)'],
-   staff:['36.1','Pessoal – remunerações'],other:['37.9','Outros devedores e credores'],bank:['43.1','Depósitos à ordem – moeda nacional'],cash:['45.1','Caixa – fundo fixo'],capital:['51.1','Capital social'],reserves:['55.1','Reservas legais'],retained:['59.1','Resultados transitados'],
-   sales:['61.1','Vendas – mercadorias'],services:['62.1','Prestações de serviços – principais'],finInc:['66.1','Juros obtidos'],othInc:['68.9','Outros proveitos operacionais'],
-   cogs:['71.1','Custo das mercadorias vendidas'],wages:['72.1','Remunerações do pessoal'],wageCh:['72.2','Encargos sobre remunerações'],deprec:['73.1','Amortizações – imobilizações corpóreas'],fse:['75.2','Fornecimentos e serviços de terceiros'],taxes:['75.3','Impostos e taxas'],finCost:['76.1','Juros suportados'],othCost:['78.9','Outros custos operacionais'],incomeTax:['87.1','Imposto corrente sobre os lucros'],resLiq:['88.1','Resultado líquido do exercício']},
+   taxProfit:['34.1','Imposto sobre os lucros (Imposto Industrial)'],wh:['34.3','IRT – retenções na fonte'],vatDed:['34.5.2','IVA dedutível'],vatLiq:['34.5.3','IVA liquidado'],vatApur:['34.5.5','IVA – apuramento'],socSec:['34.9.4','Segurança Social (INSS)'],
+   staff:['36.1','Pessoal – remunerações'],other:['37.9','Outros devedores e credores'],bank:['43.1','Depósitos à ordem – moeda nacional'],cash:['45.1','Caixa – fundo fixo'],capital:['51','Capital'],reserves:['55','Reservas legais'],retained:['81','Resultados transitados'],
+   sales:['61.3','Vendas – mercadorias'],services:['62.1','Prestações de serviços – principais'],finInc:['66.1','Juros obtidos'],othInc:['63.8','Outros proveitos e ganhos operacionais'],
+   cogs:['71.6','Custo das mercadorias vendidas'],wages:['72.2','Remunerações – pessoal'],wageCh:['72.5','Encargos sobre remunerações'],deprec:['73.1','Amortizações – imobilizações corpóreas'],fse:['75.2','Fornecimentos e serviços de terceiros'],taxes:['75.3','Impostos e taxas'],finCost:['76.1','Juros suportados'],othCost:['75.8','Outros custos e perdas operacionais'],incomeTax:['87','Imposto sobre os lucros'],resLiq:['88','Resultado líquido do exercício']},
   ex:{empresa:'Kitanda Comercial, Lda. (exemplo)',nif:'5000000000',scale:1,cli:'Hotel Atlântico',forn:'Grossista do Kikolo',wh:25000}},
  PT:{id:'PT',pais:'Portugal',ref:'SNC – Sistema de Normalização Contabilística (simplificado)',moeda:'EUR',iva:23,ssT:11,ssE:23.75,
   wh:'IRS',whLong:'Retenção na fonte de IRS',ss:'Segurança Social',irc:'IRC',ircNota:'Taxa geral de 19 % em 2026 (PME: 15 % nos primeiros 50.000 € de matéria coletável), mais derramas.',
@@ -362,6 +404,83 @@ const PACKS={
   ex:{empresa:'Comércio Atlântico Ltda. (exemplo)',nif:'00.000.000/0001-00',scale:0.01,cli:'Hotel Atlântico',forn:'Distribuidora Central',wh:0}}
 };
 const P=()=>PACKS[(typeof S!=='undefined'&&S&&S.pais)||'AO']||PACKS.AO;
+
+/* ============ Plano completo: catálogo do PGC de Angola ============ */
+// Fonte: plano de contas fornecido pelo utilizador (exportação de programa de contabilidade, 2026),
+// sem a classe 9 (analítica), sem marcadores vazios e sem contas específicas de uma empresa.
+// [código sem pontos, código com pontos, designação, tipo R=agregadora/I=integradora/M=movimento]
+// Nomes cortados pelo programa de origem foram completados (a confirmar pelo utilizador). INSS: 34.9.4 (segundo plano enviado).
+const CAT_AO=[["11","11","Imobilizações corpóreas","R"],["111","11.1","Terrenos e Recursos Naturais","I"],["1114","11.1.4","Terrenos com edificios","I"],["112","11.2","Edifícios e outras construções","I"],["1121","11.2.1","Edificios","I"],["1122","11.2.2","Outras construções","I"],["1123","11.2.3","Instalações","I"],["113","11.3","Equipamento básico","I"],["114","11.4","Equipamento de carga e transporte","I"],["115","11.5","Equipamento administrativo","I"],["1151","11.5.1","Equipamento Administrativo","I"],["1152","11.5.2","Equipamento social","I"],["116","11.6","Taras e vasilhame","I"],["119","11.9","Outras imobilizações corpóreas","I"],["12","12","Imobilizações incorpóreas","R"],["122","12.2","Despesas de investigação e desenvolvimento","I"],["123","12.3","Propriedade industrial e outros direitos","I"],["124","12.4","Despesas de constituição","I"],["129","12.9","Outras imobilizações incorpóreas","I"],["13","13","Investimentos financeiros","R"],["131","13.1","Empresas subsidiarias","I"],["132","13.2","Empresas associadas","I"],["133","13.3","Outras empresas","I"],["134","13.4","Investimentos em imoveis","I"],["135","13.5","Fundos","I"],["139","13.9","Outros investimentos financeiros","I"],["14","14","Imobilizações em curso","R"],["141","14.1","Obra em curso","I"],["147","14.7","Adiantamentos por conta de imobilizações corpóreas","I"],["148","14.8","Adiantamentos por conta de imobilizações incorpóreas","I"],["18","18","Amortizações acumuladas","R"],["181","18.1","Imobilizações corporeas","I"],["182","18.2","Imobilizações incorporeas","I"],["183","18.3","Investimentos financeiros em imóveis","I"],["19","19","Provisões para investimentos financeiros","R"],["191","19.1","Empresas subsidiarais","I"],["192","19.2","Empresas associadas","I"],["193","19.3","Outras empresas","I"],["194","19.4","Fundos","I"],["195","19.5","Títulos Negociáveis","I"],["1951","19.5.1","Acções","I"],["1952","19.5.2","Obrigações e títulos de participação","I"],["199","19.9","Outros investi. financeiros","I"],["21","21","Compras","R"],["211","21.1","Matérias-primas, subsidiárias e de consumo","I"],["2111","21.1.1","Matérias primas","I"],["21111","21.1.1.1","Mp.-Mercado Nacional","I"],["21112","21.1.1.2","Mp.-Mercado Estrangeiro","I"],["211121","21.1.1.2.1","Mp.-Mercado Africano","I"],["211122","21.1.1.2.2","Mp.-Outros Mercados","I"],["2112","21.1.2","Matérias subsídiárias","I"],["21121","21.1.2.1","Ms.-Mercado Nacional","I"],["21122","21.1.2.2","Mp.-Mercado Estrangeiro","I"],["211221","21.1.2.2.1","Ms.-Mercado Africano","I"],["211222","21.1.2.2.2","Ms.-Outros Mercados","I"],["2113","21.1.3","Materiais diversos","I"],["21131","21.1.3.1","Md.-Mercado Nacional","I"],["21132","21.1.3.2","Mp.-Mercado Estrangeiro","I"],["211321","21.1.3.2.1","Md.-Mercado Africano","I"],["211322","21.1.3.2.2","Md.-Outros Mercados","I"],["2114","21.1.4","Embalagens de consumo","I"],["21141","21.1.4.1","Ec.-Mercado Nacional","I"],["21142","21.1.4.2","Ec.Mercado estrangeiro","I"],["211421","21.1.4.2.1","Ec.-Mercado Africano","I"],["211422","21.1.4.2.2","Ec.-Outros Mercados","I"],["2115","21.1.5","Outros materiais","I"],["21151","21.1.5.1","Om.-Mercado Nacional","I"],["21152","21.1.5.2","Om.-Mercado estrangeiro","I"],["211521","21.1.5.2.1","Om.-Mercado Africano","I"],["211522","21.1.5.2.2","Om.-Outros Mercados","I"],["212","21.2","Mercadorias","I"],["2121","21.2.1","Mercadorias","I"],["21211","21.2.1.1","Mr.-Mercado Nacional","I"],["21212","21.2.1.2","Mr.-Mercado estrangeiro","I"],["212121","21.2.1.2.1","Mr.-Mercado Africano","I"],["212122","21.2.1.2.2","Mr.-Outros Mercados","I"],["214","21.4","Embalagens","I"],["21411","21.4.11","Em.-Mercado Nacional","I"],["21412","21.4.12","Em.-Mercado estrangeiro","I"],["214121","21.4.12.1","Em.-Mercado Africano","I"],["214122","21.4.12.2","Em.-Outros Mercados","I"],["217","21.7","Devoluções de compras","I"],["2171","21.7.1","Matérias-primas, subsidiárias e de consumo","I"],["21711","21.7.1.1","Matérias primas","I"],["217112","21.7.1.1.2","Mp-Mercado estrangeiro","I"],["21712","21.7.1.2","Matérias subsídiárias","I"],["217122","21.7.1.2.2","Ms.-Mercado estrangeiro","I"],["21713","21.7.1.3","Materiais diversos","I"],["217132","21.7.1.3.2","Md.-Mercado estrangeiro","I"],["21714","21.7.1.4","Embalagens de consumo","I"],["217142","21.7.1.4.2","Ec.-Mercado estrangeiro","I"],["21715","21.7.1.5","Outros materiais","I"],["217152","21.7.1.5.2","Om.-Mercado estrangeiro","I"],["2172","21.7.2","Mercadorias","I"],["21721","21.7.2.1","Mercadorias","I"],["217212","21.7.2.1.2","Mr.-Mercado estrangeiro","I"],["21724","21.7.2.4","Embalagens","I"],["217242","21.7.2.4.2","Em.-Mercado estrangeiro","I"],["218","21.8","Descontos e abatimentos em compras","I"],["2181","21.8.1","Matérias-primas, subsidiárias e de consumo","I"],["21811","21.8.1.1","Matérias primas","I"],["218111","21.8.1.1.1","Mp.-Mercado Nacional","I"],["21812","21.8.1.2","Matérias subsídiárias","I"],["218122","21.8.1.2.2","Ms.-Mercado estrangeiro","I"],["21813","21.8.1.3","Materiais diversos","I"],["218132","21.8.1.3.2","Md.-Mercado estrangeiro","I"],["21814","21.8.1.4","Embalagens de consumo","I"],["218142","21.8.1.4.2","Ec.-Mercado estrangeiro","I"],["21815","21.8.1.5","Outros materiais","I"],["218152","21.8.1.5.2","Om.-Mercado estrangeiro","I"],["2182","21.8.2","Mercadorias","I"],["21821","21.8.2.1","Mercadorias","I"],["218212","21.8.2.1.2","Mr.-Mercado estrangeiro","I"],["21824","21.8.2.4","Embalagens","I"],["218242","21.8.2.4.2","Em.-Mercado estrangeiro","I"],["22","22","Matérias-primas, subsidiárias e de consumo","R"],["221","22.1","Materias primas","I"],["222","22.2","Materias subsidiarias","I"],["223","22.3","Materiais diversos","I"],["224","22.4","Embalagens de consumo","I"],["225","22.5","Outros materiais","I"],["23","23","Produtos e trabalhos em curso","R"],["24","24","Produtos acabados e intermédios","R"],["241","24.1","Produtos acabados","I"],["242","24.2","Produtos intermedios","I"],["249","24.9","Em poder de terceiros","I"],["25","25","Subprodutos, desperdícios, resíduos e refugos","R"],["251","25.1","Sub-produtos","I"],["252","25.2","Desperdícios, resíduos e refugos","I"],["26","26","Mercadorias","R"],["261","26.1","Mercadorias","I"],["264","26.4","Embalagens","I"],["269","26.9","Em poder de terceiros","I"],["2691","26.9.1","Mercadorias","I"],["27","27","Matérias-primas, mercadorias e materiais em trânsito","R"],["271","27.1","Materias primas","I"],["272","27.2","Outros materiais","I"],["273","27.3","Mercadorias","I"],["28","28","Adiantamentos por conta de compras","R"],["281","28.1","Matérias-primas e outros materiais","I"],["2811","28.1.1","Mp.-Mercado Nacional","I"],["282","28.2","Mercadorias","I"],["29","29","Provisão para depreciação de existências","R"],["292","29.2","Matérias-primas, subsidiárias e de consumo","I"],["293","29.3","Produtos e trabalhos em curso","I"],["294","29.4","Produtos acabados e intermédios","I"],["295","29.5","Subprodutos, desperdícios, resíduos e refugos","I"],["296","29.6","Mercadorias","I"],["31","31","Clientes","R"],["311","31.1","Clientes correntes","I"],["3111","31.1.1","Grupo","I"],["31111","31.1.1.1","Subsidiarias","I"],["31112","31.1.1.2","Associadas","I"],["311121","31.1.1.2.1","Nacionais","I"],["3112","31.1.2","Não grupo","I"],["31121","31.1.2.1","Nacionais","I"],["31122","31.1.2.2","Estrangeiros","I"],["31123","31.1.2.3","Retenções p/Justificar","I"],["312","31.2","Clientes-titulos a receber","I"],["3121","31.2.1","Grupo","I"],["31211","31.2.1.1","Subsidiarias","I"],["31212","31.2.1.2","Associadas","I"],["3122","31.2.2","Não grupo","I"],["313","31.3","Clientes-titulos descontados","I"],["3131","31.3.1","Grupo","I"],["31311","31.3.1.1","Subsidiarias","I"],["31312","31.3.1.2","Associadas","I"],["3132","31.3.2","Não grupo","I"],["314","31.4","Clientes – retenções a aguardar justificação","I"],["3141","31.4.1","Grupo","I"],["31411","31.4.1.1","Subsidiárias","I"],["31412","31.4.1.2","Associadas","I"],["314121","31.4.1.2.1","Nacionais","I"],["3142","31.4.2","Não Grupo","I"],["31421","31.4.2.1","Nacionais","I"],["318","31.8","Clientes de cobrança duvidosa","I"],["3181","31.8.1","Clientes correntes","I"],["31811","31.8.1.1","Grupo","I"],["31812","31.8.1.2","Não grupo","I"],["3182","31.8.2","Clientes-titulos","I"],["31822","31.8.2.2","Não grupo","I"],["319","31.9","Clientes-saldos credores","I"],["3191","31.9.1","Adiantamentos","I"],["31911","31.9.1.1","Grupo","I"],["31912","31.9.1.2","Não grupo","I"],["319121","31.9.1.2.1","Nacionais","I"],["319122","31.9.1.2.2","Estrangeiros","I"],["3192","31.9.2","Embalagens a devolver","I"],["31922","31.9.2.2","Não grupo","I"],["3193","31.9.3","Material á consignação","I"],["31932","31.9.3.2","Não grupo","I"],["32","32","Fornecedores","R"],["321","32.1","Fornecedores-correntes","I"],["3211","32.1.1","Grupo","I"],["32111","32.1.1.1","Subsidiarias","I"],["32112","32.1.1.2","Associadas","I"],["321121","32.1.1.2.1","Nacionais","I"],["3212","32.1.2","Não grupo","I"],["32121","32.1.2.1","Nacionais","I"],["32122","32.1.2.2","Estrangeiros","I"],["322","32.2","Fornecedores-titulos a pagar","I"],["3221","32.2.1","Grupo","I"],["32211","32.2.1.1","Subsidiarias","I"],["32212","32.2.1.2","Associadas","I"],["3222","32.2.2","Não grupo","I"],["328","32.8","Fornecedores – facturas em recepção e conferência","I"],["3282","32.8.2","Não grupo","I"],["32821","32.8.2.1","Nacionais","I"],["329","32.9","Fornecedores-saldos devedores","I"],["3291","32.9.1","Adiantamentos","I"],["32911","32.9.1.1","Grupo","I"],["329111","32.9.1.1.1","Subsidiarias","I"],["329112","32.9.1.1.2","Associadas","I"],["3291121","32.9.1.1.2.1","Nacionais","I"],["32912","32.9.1.2","Não grupo","I"],["329121","32.9.1.2.1","Nacionais","I"],["329122","32.9.1.2.2","Estrangeiros","I"],["3292","32.9.2","Embalagens a devolver","I"],["32922","32.9.2.2","Não grupo","I"],["3293","32.9.3","Material á consignação","I"],["32932","32.9.3.2","Não grupo","I"],["33","33","Empréstimos","R"],["331","33.1","Emprestimos bancários","I"],["3311","33.1.1","Moeda nacional","I"],["3312","33.1.2","Moeda Estrangeira","I"],["332","33.2","Emprestimos por obrigaçõs","I"],["3321","33.2.1","Convertiveis","I"],["3322","33.2.2","Não convertiveis","I"],["333","33.3","Empréstimos por títulos de participação","I"],["339","33.9","Outros emprestimos obtidos","I"],["3391","33.9.1","Curto prazo","I"],["3392","33.9.2","Médio e longo prazo","I"],["34","34","Estado","R"],["341","34.1","Imposto s/ lucros","I"],["342","34.2","Imposto de produção e consumo","I"],["3424","34.2.4","Imposto Consumo Caixa (2015)","I"],["343","34.3","Imposto sobre os rendimentos do trabalho (IRT)","I"],["3431","34.3.1","IRT – trabalhadores dependentes","M"],["3432","34.3.2","IRT – trabalhadores independentes","M"],["344","34.4","Imposto de circulação","I"],["345","34.5","IVA","I"],["3451","34.5.1","IVA Suportado","I"],["34511","34.5.1.1","Existências","M"],["34512","34.5.1.2","Meios fixos e investimentos","M"],["34513","34.5.1.3","Outros bens e serviços","M"],["3452","34.5.2","IVA Dedutivel","I"],["34521","34.5.2.1","Existências","M"],["34522","34.5.2.2","Meios fixos e investimentos","M"],["34523","34.5.2.3","Outros bens e serviços","M"],["3453","34.5.3","IVA Liquidado","I"],["34531","34.5.3.1","Operações gerais","M"],["34532","34.5.3.2","Operações abrangidas pelo regime de IVA de caixa","M"],["34533","34.5.3.3","Autoconsumo e operações gratuitas","M"],["34534","34.5.3.4","Operações especiais","M"],["3454","34.5.4","IVA Regularizações","I"],["34541","34.5.4.1","Mensais a favor do sujeito passivo","M"],["34542","34.5.4.2","Mensais a favor do Estado","M"],["34543","34.5.4.3","Anual, por cálculo do pro rata definitivo","M"],["34544","34.5.4.4","Outras regularizações anuais","M"],["3455","34.5.5","IVA Apuramento","I"],["34551","34.5.5.1","Apuramento do regime IVA normal","M"],["34552","34.5.5.2","Apuramento do regime de IVA de caixa","M"],["3456","34.5.6","IVA a Pagar","I"],["34561","34.5.6.1","IVA a pagar de apuramento","M"],["34562","34.5.6.2","IVA a pagar de cativo","M"],["34563","34.5.6.3","IVA a pagar de liquidações oficiosas","M"],["3457","34.5.7","IVA a Recuperar","I"],["34571","34.5.7.1","IVA a recuperar de apuramento","M"],["34572","34.5.7.2","IVA a recuperar de cativo","M"],["3458","34.5.8","IVA Reembolsos pedidos","I"],["34581","34.5.8.1","IVA reembolsos pedidos","M"],["34582","34.5.8.2","Reembolsos diferidos","M"],["34583","34.5.8.3","Reembolsos indeferidos","M"],["34584","34.5.8.4","Reembolsos reclamados, recorridos ou impugnados","M"],["346","34.6","Certificado de crédito fiscal a compensar","I"],["347","34.7","Imposto de selo","I"],["348","34.8","Subsidios a preços","I"],["349","34.9","Outros impostos","I"],["3491","34.9.1","Imposto Predial urbano(IPU)","I"],["3494","34.9.4","Segurança Social (INSS)","M"],["35","35","Entidades participantes e participadas","R"],["351","35.1","Entidades Participantes","I"],["3511","35.1.1","Estado","I"],["3512","35.1.2","Empresas do grupo – subsidiárias","I"],["3513","35.1.3","Empresas do grupo associadas","I"],["3514","35.1.4","Outros","I"],["35144","35.1.4.4","Empréstimos","I"],["3515","35.1.5","Accionistas","I"],["352","35.2","Entidades Participadas","I"],["3521","35.2.1","Estado","I"],["3522","35.2.2","Empresas do grupo – subsidiárias","I"],["3523","35.2.3","Empresas do grupo associadas","I"],["3524","35.2.4","Outros","I"],["36","36","Pessoal","R"],["361","36.1","Pessoal - remunerações","I"],["3611","36.1.1","Orgaõs sociais","I"],["3612","36.1.2","Empregados","I"],["362","36.2","Pessoal – participação nos resultados","I"],["363","36.3","Pessoal – adiantamentos e empréstimos","I"],["364","36.4","Pessoal - Fundo Social","I"],["365","36.5","Pessoal - Requisições Fundos","I"],["366","36.6","Pessoal – débitos a funcionários","I"],["369","36.9","Pessoal - Outras operações","I"],["37","37","Outros valores a receber e a pagar","R"],["371","37.1","Compras de Imobilizado","I"],["3711","37.1.1","Corporeo","I"],["37112","37.1.1.2","Não grupo","I"],["371121","37.1.1.2.1","Nacionais","I"],["3712","37.1.2","Incorporeo","I"],["37122","37.1.2.2","Não grupo","I"],["3713","37.1.3","Financeiro","I"],["37132","37.1.3.2","Não grupo","I"],["372","37.2","Vendas de Imobilizado","I"],["3721","37.2.1","Corporeo","I"],["37212","37.2.1.2","Não grupo","I"],["372121","37.2.1.2.1","Nacionais","I"],["3722","37.2.2","Incorporeo","I"],["37222","37.2.2.2","Não grupo","I"],["3723","37.2.3","Financeiro","I"],["37232","37.2.3.2","Não grupo","I"],["373","37.3","Proveitos a facturar","I"],["374","37.4","Encargos a repartir por períodos futuros","I"],["3743","37.4.3","Custos diversos","I"],["3744","37.4.4","Seguros","I"],["375","37.5","Encargos a pagar","I"],["3751","37.5.1","Remunerações","I"],["3755","37.5.5","Rendas de imóveis","I"],["3759","37.5.9","Rendas de imóveis","I"],["376","37.6","Proveitos a repartir por períodos futuros","I"],["377","37.7","Contas transitorias","I"],["3771","37.7.1","Transacções entre a sede e as dependências da empresa","I"],["379","37.9","Outros valores a receber e a pagar","I"],["3791","37.9.1","Outros Devedores","I"],["3792","37.9.2","Credores diversos","I"],["3793","37.9.3","Conta a Regularizar","I"],["379300","37.9.3.00","Oper.Bancárias p/regularizar","I"],["3794","37.9.4","Outros devedores e credores diversos","I"],["3795","37.9.5","Regularizações","I"],["38","38","Provisões para cobranças duvidosas","R"],["381","38.1","Provisões para Clientes","I"],["3811","38.1.1","Clientes - correntes","I"],["3812","38.1.2","Clientes - títulos a receber","I"],["3813","38.1.3","Clientes - cobranças duvidosa","I"],["382","38.2","Provisões para saldos devedores de fornecedores","I"],["383","38.3","Provisões para participantes e participadas","I"],["384","38.4","Provisões para dívidas do pessoal","I"],["389","38.9","Provisões para outros saldos a receber","I"],["3891","38.9.1","Vendas imobilizado","I"],["39","39","Provisões para outros riscos e encargos","R"],["391","39.1","Provisões para pensões","I"],["392","39.2","Provisões para processos judiciais em curso","I"],["393","39.3","Provisões para acidentes de trabalho","I"],["394","39.4","Provisões para garantias dadas a clientes","I"],["399","39.9","Provisões para outros riscos e encargos","I"],["41","41","Títulos negociáveis","R"],["411","41.1","Acções","I"],["412","41.2","Obrigações","I"],["413","41.3","Titulos divida pública","I"],["42","42","Depósitos a prazo","R"],["421","42.1","Moeda Nacional","I"],["422","42.2","Moeda estrangeira","I"],["43","43","Depósitos à ordem","R"],["431","43.1","Moeda Nacional","I"],["432","43.2","Moeda estrangeira","I"],["44","44","Outros depósitos","R"],["441","44.1","Moeda Nacional","I"],["442","44.2","Moeda Estrangeira","I"],["45","45","Caixa","R"],["451","45.1","Fundo fixo","I"],["4511","45.1.1","Caixa Kwanza","I"],["4512","45.1.2","Caixa Dólares","I"],["452","45.2","Valores para depositar","I"],["453","45.3","Valores destinados a pagamentos específicos","I"],["4531","45.3.1","Salarios","I"],["48","48","Conta transitória","R"],["49","49","Provisões para aplicações de tesouraria","R"],["491","49.1","Titulos Negociaveis","I"],["492","49.2","Provisões para outras aplicações de tesouraria","I"],["51","51","Capital","R"],["52","52","Acções/quotas próprias","R"],["521","52.1","Valor nominal","I"],["522","52.2","Descontos","I"],["523","52.3","Prémios","I"],["53","53","Prémios de emissão","R"],["54","54","Prestações suplementares","R"],["55","55","Reservas legais","R"],["56","56","Reservas de reavaliação","R"],["561","56.1","Legais","I"],["562","56.2","Autonomas","I"],["57","57","Reservas com fins especiais","R"],["58","58","Reservas livres","R"],["61","61","Vendas","R"],["611","61.1","Produtos acabados e intermédios","I"],["6112","61.1.2","Mercado estrangeiro","I"],["612","61.2","Subprodutos, desperdícios, resíduos e refugos","I"],["6122","61.2.2","Mercado estrangeiro","I"],["613","61.3","Mercadorias","I"],["6132","61.3.2","Mercado estrangeiro","I"],["614","61.4","Embalagens de consumo","I"],["6142","61.4.2","Mercado estrangeiro","I"],["617","61.7","Devoluções","I"],["6172","61.7.2","Mercado estrangeiro","I"],["618","61.8","Descontos e abatimentos","I"],["6182","61.8.2","Mercado estrangeiro","I"],["62","62","Prestações de serviços","R"],["621","62.1","Serviços principais","I"],["6211","62.1.1","Mercado nacional","I"],["6212","62.1.2","Mercado estrangeiro","I"],["62121","62.1.2.1","Mercado africano","I"],["62122","62.1.2.2","Outros mercados","I"],["622","62.2","Serviços secundários","I"],["6221","62.2.1","Mercado nacional","I"],["6222","62.2.2","Mercado estrangeiro","I"],["62221","62.2.2.1","Mercado africano","I"],["62222","62.2.2.2","Outros mercados","I"],["628","62.8","Descontos e abatimentos","I"],["6282","62.8.2","Mercado estrangeiro","I"],["63","63","Outros proveitos operacionais","R"],["631","63.1","Serviços suplementares","I"],["638","63.8","Outros proveitos ganhos oper.","I"],["64","64","Variação nos inventários de produtos acabados e de produção em curso","R"],["641","64.1","Produtos e trabalhos em curso","I"],["642","64.2","Produtos acabados","I"],["643","64.3","Produtos intermedios","I"],["65","65","Trabalhos para a própria empresa","R"],["651","65.1","Para Imobilizado","I"],["652","65.2","Para encargos a repartir por exercícios futuros","I"],["66","66","Proveitos e ganhos financeiros gerais","R"],["661","66.1","Juros","I"],["6611","66.1.1","De Investimentos financeiros","I"],["6612","66.1.2","Juros de mora relativos a dívidas de terceiros","I"],["6615","66.1.5","De aplicações de tesouraria","I"],["661501","66.1.5.01","Deposito a prazo","I"],["661502","66.1.5.02","Excedente de Tesouraria","I"],["662","66.2","Diferenças de câmbio favoráveis","I"],["663","66.3","Descontos pronto pag. obtidos","I"],["664","66.4","Rendimentos de investimentos em imóveis","I"],["665","66.5","Rendimentos de participações de capital","I"],["666","66.6","Ganhos na alienação de aplicações financeiras","I"],["6661","66.6.1","Investimentos financeiros","I"],["667","66.7","Reposição de provisões","I"],["6671","66.7.1","Investimentos financeiros","I"],["6672","66.7.2","Aplicações de tesouraria","I"],["67","67","Proveitos e ganhos financeiros em filiais e associadas","R"],["671","67.1","Rendimentos de participações de capital","I"],["68","68","Outros proveitos e ganhos não operacionais","R"],["6801","68.01","Reposição de provisões","I"],["68011","68.01.1","Existencias","I"],["68012","68.01.2","Cobranças duvidosas","I"],["68013","68.01.3","Riscos e Encargos","I"],["6802","68.02","Anulação de amortizações extraordinárias","I"],["6803","68.03","Ganhos em imobilizações","I"],["6804","68.04","Ganhos em existências","I"],["6805","68.05","Recuperação de dívidas","I"],["6806","68.06","Benefícios de penalidades contratuais","I"],["6810","68.10","Correcções relativas a exercícios anteriores","I"],["6811","68.11","Outros ganhos e perdas não operacionais","I"],["69","69","Proveitos e ganhos extraordinários","R"],["691","69.1","Ganhos resultantes de catástrofes naturais","I"],["692","69.2","Ganhos resultantes de convulsões políticas","I"],["693","69.3","Ganhos resultantes de expropriações","I"],["694","69.4","Ganhos resultantes de sinistros","I"],["695","69.5","Subsídios","I"],["696","69.6","Anulação de passivos não exigíveis","I"],["697","69.7","Outros Ganhos Extraordinarios","I"],["71","71","Custo das existências vendidas e das matérias consumidas","R"],["711","71.1","Materias Primas","I"],["712","71.2","Materias Subsidiarias","I"],["713","71.3","Materiais diversos","I"],["714","71.4","Embalagens de consumo","I"],["715","71.5","Outros materiais","I"],["716","71.6","Mercadorias","I"],["72","72","Custos com o pessoal","R"],["721","72.1","Remunerações - Orgãos sociais","I"],["722","72.2","Remunerações - Pessoal","I"],["723","72.3","Pensões","I"],["724","72.4","Prémios para Pensões","I"],["725","72.5","Encargos sobre remunerações","I"],["726","72.6","Seguros de acidentes de trabalho e doenças profissionais","I"],["727","72.7","Formação","I"],["728","72.8","Outros despesas com pessoal","I"],["7281","72.8.1","Órgãos sociais","I"],["7282","72.8.2","Pessoal","I"],["73","73","Amortizações do exercício","R"],["731","73.1","Imobilizações Corporeas","I"],["732","73.2","Imobilizações Incorporeas","I"],["75","75","Outros custos e perdas operacionais","R"],["751","75.1","Sub-contratos","I"],["7511","75.1.1","Sc-Nacionais","I"],["7512","75.1.2","Sc-Estrangeiros","I"],["75121","75.1.2.1","Sc-Mercado Africano","I"],["75122","75.1.2.2","Sc-Outros Mercados","I"],["752","75.2","Fornecimentos e serviços de terceiros","I"],["75213","75.2.13","Combustíveis e Outros Fluídos","I"],["75214","75.2.14","Conservação e reparação (bens)","I"],["75219","75.2.19","Outros fornecimentos","I"],["75220","75.2.20","Comunicação","I"],["75221","75.2.21","Rendas e alugueres","I"],["75222","75.2.22","Seguros","I"],["75226","75.2.26","Conservação e reparação (serviços)","I"],["75230","75.2.30","Contencioso e notariado","I"],["75232","75.2.32","Assistencia Tecnica","I"],["752322","75.2.32.2","At-Estrangeiros","I"],["75233","75.2.33","Trabalhos executados no exterior","I"],["75234","75.2.34","Honorários e avenças","I"],["752342","75.2.34.2","Ti-Estrangeiros","I"],["75235","75.2.35","Royalties","I"],["752352","75.2.35.2","Ri-Mercado Estrangeiros","I"],["75239","75.2.39","Outros serviços","I"],["753","75.3","Impostos","I"],["7531","75.3.1","Indirectos","I"],["7532","75.3.2","Directos","I"],["75329","75.3.2.9","Outros impostos","I"],["758","75.8","Outros custos e perdas operacionais","I"],["76","76","Custos e perdas financeiros gerais","R"],["761","76.1","Juros","I"],["7611","76.1.1","De emprestimos","I"],["76111","76.1.1.1","Bancários","I"],["762","76.2","Diferenças de câmbio desfavoráveis","I"],["763","76.3","Descontos de pronto pagamento concedidos","I"],["764","76.4","Amortizações de investimentos em imóveis","I"],["765","76.5","Provisões para aplicações financeiras","I"],["7651","76.5.1","Investimentos financeiros","I"],["7652","76.5.2","Aplicações de tesouraria","I"],["766","76.6","Perdas na alienação de aplicações financeiras","I"],["7661","76.6.1","Investimentos financeiros","I"],["767","76.7","Serviços bancários","I"],["77","77","Custos e perdas financeiros em filiais e associadas","R"],["78","78","Outros custos e perdas não operacionais","R"],["7801","78.01","Provisões do exercício","I"],["78011","78.01.1","Existências","I"],["78012","78.01.2","Cobrança duvidosas","I"],["78013","78.01.3","Riscos e encargos","I"],["780132","78.01.3.2","Processos judiciais em curso","I"],["7802","78.02","Amotizações extraordinárias","I"],["7803","78.03","Perdas em imobilizações","I"],["7804","78.04","Perdas em existências","I"],["7806","78.06","Multas e penalidades contratuais","I"],["7810","78.10","Correcções relativas a exercícios anteriores","I"],["7811","78.11","Outros custos e perdas não operacionais","I"],["78111","78.11.1","Donativos","I"],["79","79","Custos e perdas extraordinários","R"],["791","79.1","Perdas resultantes de catástrofes naturais","I"],["792","79.2","Perdas resultantes de convulsões políticas","I"],["794","79.4","Perdas resultantes de sinistros","I"],["81","81","Resultados transitados","R"],["82","82","Resultados operacionais","R"],["83","83","Resultados financeiros","R"],["84","84","Resultados financeiros em filiais e associadas","R"],["85","85","Resultados não operacionais","R"],["86","86","Resultados extraordinários","R"],["87","87","Imposto sobre os lucros","R"],["88","88","Resultados líquidos do exercício","R"],["89","89","Dividendos antecipados","R"]];
+const CATD={};for(const [r,d,n,t] of CAT_AO)CATD[d]={raw:r,disp:d,name:n,t};
+const catParent=d=>{const i=d.lastIndexOf('.');return i>0?d.slice(0,i):null;};
+const CAT=()=>P().id==='AO'?CAT_AO:[];
+const XC=()=>(typeof S!=='undefined'&&S&&S.contas)||[];
+const isX=r=>typeof r==='string'&&r.startsWith('pgc_');
+const xRec=r=>XC().find(x=>x.id===r);
+const nice=n=>{n=String(n||'').trim();return n===n.toUpperCase()&&/[A-ZÀ-Ý]{3}/.test(n)?n.charAt(0)+n.slice(1).toLowerCase():n;};
+function pgcKind(raw){
+  const c1=raw[0],c2=raw.slice(0,2);
+  if(c1==='1')return ['18','19'].includes(c2)?{k:'A',d:0,contra:1}:{k:'A',d:1};
+  if(c1==='2')return c2==='29'?{k:'A',d:0,contra:1}:{k:'A',d:1};
+  if(c1==='3')return c2==='31'?{k:'T',d:1,ent:1}:c2==='32'?{k:'T',d:0,ent:1}:c2==='33'?{k:'P',d:0}:c2==='34'?{k:'T',d:0,st:1}:c2==='38'?{k:'A',d:0,contra:1}:c2==='39'?{k:'P',d:0}:{k:'T',d:0};
+  if(c1==='4')return c2==='49'?{k:'A',d:0,contra:1}:c2==='48'?{k:'T',d:0}:['42','43','44','45'].includes(c2)?{k:'A',d:1,liq:1}:{k:'A',d:1};
+  if(c1==='5')return {k:'CP',d:0};
+  if(c1==='6')return {k:'R',d:0};
+  if(c1==='7')return {k:'G',d:1};
+  if(c2==='87')return {k:'G',d:1};
+  return {k:'CP',d:0};
+}
+// grupo na Demonstração de Resultados (PGC Angola)
+function drGrupo(raw){const c2=raw.slice(0,2);if(['66','67','76','77'].includes(c2))return 'fin';if(['68','69','78','79'].includes(c2))return 'nop';if(c2==='87')return 'tax';return 'op';}
+const RL=()=>ROLES.concat(XC().map(x=>A[x.id]).filter(Boolean));
+const codeUnder=(a,b)=>a===b||a.startsWith(b+'.');
+const accByCode=d=>ACC.find(a=>code(a.c)===d);
+function pgcPushSub(parent,suf,name){
+  const id='sub_'+uid();const first=!hasSubs(parent);let moved=0;
+  S.subs=S.subs||[];S.subs.push({id,parent,suf,name});
+  if(first){for(const e of S.entries)for(const l of e.lines)if(l.a===parent){l.a=id;moved++;}}
+  applyPack();return {id,moved};
+}
+function pgcActivate(d){
+  if(!CATD[d])return;
+  if(accByCode(d))return toast('A conta '+d+' já está ativa.');
+  const chain=[];let x=d;while(x){chain.unshift(x);x=catParent(x);}
+  let k=-1;for(let i=chain.length-1;i>=0;i--)if(accByCode(chain[i])){k=i;break;}
+  const made=[];let moved=0,movedFrom='';let parentId;
+  if(k>=0)parentId=accByCode(chain[k]).c;
+  else{
+    let i=0;while(i<chain.length-1&&ACC.some(a=>codeUnder(code(a.c),chain[i])))i++;
+    const t=CATD[chain[i]];const id='pgc_'+t.raw;
+    S.contas=S.contas||[];S.contas.push({id,raw:t.raw,disp:t.disp,name:nice(t.name)});applyPack();
+    parentId=id;k=i;made.push(t.disp+' '+nice(t.name));
+  }
+  for(let i=k+1;i<chain.length;i++){const t=CATD[chain[i]];const suf=chain[i].slice(chain[i-1].length+1);const pc=code(parentId);const r=pgcPushSub(parentId,suf,nice(t.name));if(r.moved){moved+=r.moved;movedFrom=pc;}parentId=r.id;made.push(t.disp+' '+nice(t.name));}
+  logA('Contas do PGC ativadas',made.join(' · ')+(moved?' · '+moved+' movimentos de '+movedFrom+' passaram para a primeira subconta':''));
+  commit((made.length>1?'Ativadas: ':'Ativada: ')+made.join(', ')+'.'+(moved?' Os '+moved+' movimentos de '+movedFrom+' passaram para a nova subconta.':''));
+}
+function pgcRemove(id){
+  if(hasSubs(id))return toast('Remova primeiro as subcontas desta conta.');
+  if(S.entries.some(e=>e.lines.some(l=>l.a===id)))return toast('A conta tem movimentos e não pode ser removida.');
+  const x=xRec(id);S.contas=XC().filter(y=>y.id!==id);applyPack();logA('Conta do PGC removida',x?x.disp+' '+x.name:id);commit('Conta removida.');
+}
+function pgcCard(){
+  if(!CAT().length)return '';
+  const q=(ui.pgcQ||'').trim().toLowerCase(),cl=ui.pgcCl||'';
+  const norm=t=>t.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+  const nq=norm(q),nqd=q.replace(/\./g,'');
+  let L=[];
+  if(q||cl)L=CAT_AO.filter(([r,d,n])=>(!cl||r[0]===cl)&&(!q||r.startsWith(nqd)||d.startsWith(q)||norm(n).includes(nq)));
+  const tot=L.length;L=L.slice(0,60);
+  const ativas=XC().length+SUBS().length;
+  const rows=L.map(([r,d,n,t])=>{const ex=accByCode(d);const lvl=d.split('.').length-1;
+    return '<tr><td class="code" style="padding-left:'+(8+lvl*10)+'px">'+esc(d)+'</td><td'+(t==='R'?' style="font-weight:600"':'')+'>'+esc(ex?accName(ex.c):nice(n))+'</td><td class="small muted">'+(t==='R'?'Agregadora':t==='M'?'Movimento (detalhe)':'Movimento')+'</td><td style="text-align:right;white-space:nowrap">'+(ex?'<span class="okmsg">✓ na app</span>':'<button class="btn sm" data-act="pgcAdd" data-d="'+esc(d)+'">Ativar</button>')+'</td></tr>';}).join('');
+  return '<div class="card" id="pgcCard" style="margin-top:16px"><h3>Plano completo (PGC de Angola)</h3><p class="hint" style="margin-top:0">'+CAT_AO.length+' contas do plano. Pesquise pelo código ou pelo nome e clique em <b>Ativar</b>: a conta é criada com as contas-mãe que faltarem, e passa a aparecer no balancete, no balanço, na demonstração de resultados e no SAF-T. Se a conta-mãe já tiver movimentos, estes passam para a primeira subconta.</p>'+
+   '<div class="fields"><label for="pgcQ">Procurar<input type="search" id="pgcQ" placeholder="Ex.: 75.2 ou seguros" value="'+esc(ui.pgcQ||'')+'"></label><label for="pgcCl">Classe<select id="pgcCl"><option value="">Todas</option>'+Object.entries(P().cls).map(([k,v])=>'<option value="'+k+'"'+(cl===k?' selected':'')+'>'+k+' – '+esc(v)+'</option>').join('')+'</select></label></div>'+
+   (q||cl?(tot?'<div class="tbl-wrap" style="margin-top:10px"><table><thead><tr><th>Conta</th><th>Designação</th><th>Tipo</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'+(tot>60?'<p class="small muted">A mostrar 60 de '+tot+'. Refine a pesquisa.</p>':''):'<p class="hint">Nenhuma conta encontrada.</p>'):'<p class="small muted" style="margin-bottom:0">Contas e subcontas criadas nesta empresa: '+ativas+'.</p>')+'</div>';
+}
+document.addEventListener('input',e=>{if(e.target.id==='pgcQ'){ui.pgcQ=e.target.value;clearTimeout(ui._pq);ui._pq=setTimeout(()=>{render();const el=$('#pgcQ');if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}},250);}});
+document.addEventListener('change',e=>{if(e.target.id==='pgcCl'){ui.pgcCl=e.target.value;render();}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act="pgcAdd"],[data-act="pgcDel"]');if(!b)return;if(b.dataset.act==='pgcAdd')pgcActivate(b.dataset.d);else pgcRemove(b.dataset.r);});
 /* ---- subcontas ---- */
 const SUBS=()=>(typeof S!=='undefined'&&S&&S.subs)||[];
 const isSub=r=>typeof r==='string'&&r.startsWith('sub_');
@@ -375,12 +494,13 @@ const leaf=r=>leaves(r)[0];
 const expand=list=>[...new Set(list.flatMap(leaves))];
 const leafLines=L=>L.map(l=>Object.assign({},l,{a:leaf(l.a)}));
 const sep=()=>P().id==='PT'?'':'.';
-function code(c){if(isSub(c)){const q=subRec(c);return q?code(q.parent)+sep()+q.suf:c;}return P().acc[c]?P().acc[c][0]:c;}
-function accName(c){if(isSub(c)){const q=subRec(c);return q?q.name:c;}return P().acc[c]?P().acc[c][1]:c;}
+function code(c){if(isSub(c)){const q=subRec(c);return q?code(q.parent)+sep()+q.suf:c;}if(isX(c)){const x=xRec(c);return x?x.disp:c;}return P().acc[c]?P().acc[c][0]:c;}
+function accName(c){if(isSub(c)){const q=subRec(c);return q?q.name:c;}if(isX(c)){const x=xRec(c);return x?x.name:c;}return P().acc[c]?P().acc[c][1]:c;}
 const lab=c=>code(c)+' '+accName(c);
 let ACC=ROLES,ALL=[];
-function applyPack(){A=Object.assign({},A0);for(const q of SUBS()){const b=A0[base(q.id)];if(b)A[q.id]=Object.assign({},b,{c:q.id,sub:1,parent:q.parent});}
-  ACC=Object.values(A).filter(a=>P().acc[base(a.c)]).sort((x,y)=>code(x.c).localeCompare(code(y.c),'en',{numeric:true}));ALL=ACC.filter(a=>!hasSubs(a.c)).map(a=>a.c);}
+function applyPack(){A=Object.assign({},A0);for(const x of XC())A[x.id]=Object.assign({c:x.id,x:1},pgcKind(x.raw));for(const q of SUBS()){const b=A[base(q.id)];if(b)A[q.id]=Object.assign({},b,{c:q.id,sub:1,parent:q.parent,x:0});}
+  CASH.length=0;CASH.push('bank','cash',...XC().filter(x=>pgcKind(x.raw).liq).map(x=>x.id));
+  ACC=Object.values(A).filter(a=>P().acc[base(a.c)]||isX(base(a.c))).sort((x,y)=>code(x.c).localeCompare(code(y.c),'en',{numeric:true}));ALL=ACC.filter(a=>!hasSubs(a.c)).map(a=>a.c);}
 const KL={A:'Ativo',T:'Terceiros',P:'Passivo',CP:'Capital próprio'};
 const kl=k=>k==='R'?P().R:k==='G'?P().G:k==='CP'&&P().bs?P().bs.cp:KL[k];
 const CUR={AOA:'Kz',EUR:'€',BRL:'R$',MZN:'MT',CVE:'CVE',STN:'Db',XOF:'FCFA',USD:'US$'};
@@ -441,7 +561,7 @@ function exampleState(cc){
   return {v:5,pais:cc,empresa:x.empresa,nif:x.nif,moeda:p.moeda,iva:p.iva>0,ivaTaxa:p.iva,prof:true,exemplo:true,subs:[],log:[],entries:e,
     bens:[{id:uid(),desc:'Computadores e mobiliário',custo:v(720000),meses:36,inicio:'2026-10'}],fecho:{'2026-10':{extrato:r2(bank)}}};
 }
-function blankState(){return {v:5,cid:S.cid,pais:S.pais,empresa:S.empresa||'',nif:S.nif||'',moeda:S.moeda,iva:S.iva,ivaTaxa:S.ivaTaxa,prof:S.prof,exemplo:false,subs:[],log:[],entries:[],bens:[],fecho:{}};}
+function blankState(){return {v:5,cid:S.cid,pais:S.pais,empresa:S.empresa||'',nif:S.nif||'',moeda:S.moeda,iva:S.iva,ivaTaxa:S.ivaTaxa,prof:S.prof,exemplo:false,subs:S.subs||[],contas:S.contas||[],log:[],entries:[],bens:[],fecho:{}};}
 var S=exampleState();
 applyPack();
 let sel=latestMonth();
@@ -450,10 +570,10 @@ function latestMonth(){const ms=S.entries.map(e=>monthOf(e.date)).sort();return 
 /* ============ Cálculos ============ */
 function sums(c,from,to,ent,own,real){let d=0,cr=0;const pl=!real&&A[c]&&(A[c].k==='R'||A[c].k==='G');for(const e of S.entries){if(from&&e.date<from)continue;if(to&&e.date>to)continue;if(pl&&e.tpl==='apur_res')continue;for(const l of e.lines){if((own?l.a===c:isUnder(l.a,c))&&(ent==null||(l.e||'')===ent)){d+=+l.d||0;cr+=+l.c||0;}}}return {d,c:cr};}
 const raw=(c,from,to,ent,own,real)=>{const s=sums(c,from,to,ent,own,real);return s.d-s.c;};
-function resultReal(from,to){let x=0;for(const a of ROLES){if(a.k==='R')x-=raw(a.c,from,to,null,false,true);if(a.k==='G')x-=raw(a.c,from,to,null,false,true);}return x;}
+function resultReal(from,to){let x=0;for(const a of RL()){if(a.k==='R')x-=raw(a.c,from,to,null,false,true);if(a.k==='G')x-=raw(a.c,from,to,null,false,true);}return x;}
 const nat=(c,from,to)=>A[c].d?raw(c,from,to):-raw(c,from,to);
 function entryOK(lines){const d=lines.reduce((s,l)=>s+(+l.d||0),0),c=lines.reduce((s,l)=>s+(+l.c||0),0);return {d:r2(d),c:r2(c),ok:Math.abs(d-c)<0.005&&d>0};}
-function result(from,to){let R=0,G=0;for(const a of ROLES){if(a.k==='R')R+=nat(a.c,from,to);if(a.k==='G')G+=nat(a.c,from,to);}return {R,G,res:R-G};}
+function result(from,to){let R=0,G=0;for(const a of RL()){if(a.k==='R')R+=nat(a.c,from,to);if(a.k==='G')G+=nat(a.c,from,to);}return {R,G,res:R-G};}
 function bsheet(to){
   const y0=to.slice(0,4)+'-01-01';
   const anc=[],ac=[],pnc=[],pc=[],cp=[];
@@ -465,6 +585,8 @@ function bsheet(to){
       const ents=entities(a.c,to);let deb=0,cre=0;for(const x of ents){if(x.s>0)deb+=x.s;else cre-=x.s;}
       push(ac,accName(a.c)+(a.c==='suppliers'?' (adiantamentos)':a.c==='other'?' (devedores)':''),deb);push(pc,accName(a.c)+(a.c==='clients'?' (adiantamentos)':a.c==='other'?' (credores)':''),cre);
     } else if(v>0)push(ac,(P().id==='BR'?'':'Estado e outros: ')+accName(a.c),v); else push(pc,(A[a.c].st&&P().id!=='BR'?'Estado: ':'')+accName(a.c),-v);}
+  for(const x of XC()){const a=A[x.id];if(!a||CASH.includes(x.id))continue;const v=raw(x.id,null,to),nm=accName(x.id),c2=x.raw.slice(0,2);
+    if(a.k==='A')push(x.raw[0]==='1'?anc:ac,nm,v);else if(a.k==='T'){if(v>0)push(ac,nm,v);else push(pc,nm,-v);}else if(a.k==='P')push(c2==='33'||c2==='39'?pnc:pc,nm,-v);else if(a.k==='CP')push(cp,nm,-v);}
   for(const c of CASH)push(ac,accName(c),raw(c,null,to));
   push(pnc,accName('loans'),-raw('loans',null,to));
   push(cp,accName('capital'),-raw('capital',null,to));push(cp,accName('reserves'),-raw('reserves',null,to));
@@ -640,7 +762,7 @@ let store={kind:'none',db:null,uid:null},saveTimer=null,saving=false,again=false
 let IDX={list:[],current:null};const saved=new Map();
 function setStatus(t,k){statusTxt=[t,k||''];const el=$('#status');if(el){el.textContent=t;el.className='pill '+(k||'');}}
 const newCid=()=>'c'+uid();
-function normalizeS(o){S=Object.assign({v:5,pais:'AO',moeda:'AOA',iva:true,ivaTaxa:14,prof:true,bens:[],fecho:{},subs:[],log:[],entries:[]},o);if(!PACKS[S.pais])S.pais='AO';if(!S.cid)S.cid=newCid();applyPack();sel=latestMonth();}
+function normalizeS(o){S=Object.assign({v:5,pais:'AO',moeda:'AOA',iva:true,ivaTaxa:14,prof:true,bens:[],fecho:{},subs:[],contas:[],log:[],entries:[]},o);if(!PACKS[S.pais])S.pais='AO';if(!S.cid)S.cid=newCid();applyPack();sel=latestMonth();}
 function migrateOld(o){if(!o||!Array.isArray(o.entries))return null;if(o.v===2){for(const e of o.entries)for(const l of e.lines)l.a=AO_MAP[l.a]||l.a;o.pais='AO';}o.v=5;o.cid=newCid();return o;}
 const dpath=id=>'data/users/'+store.uid+'/'+id;
 async function sget(id){
@@ -783,6 +905,58 @@ const PAPEL_TXT={dono:'tudo, incluindo a equipa e apagar a empresa',contabilista
 function meuPapel(){return store.kind==='sb'?SB.papel(S.cid):'dono';}
 function soLeitura(){return store.kind==='sb'&&SB.known.has(S.cid)&&(!SBW.includes(SB.papel(S.cid))||empInativa());}
 /* --- ecrã de entrada --- */
+/* ============ Página pública (antes de entrar) ============ */
+const LP={open:false,planos:null,precos:null,pais:'AO',loading:false};
+const LP_CONTACTO='cajoyangola1968@finandobra.com';
+async function lpLoad(){
+  if(LP.loading||LP.planos)return;LP.loading=true;
+  try{const c=SB.init();const [a,b]=await Promise.all([c.from('planos').select('*'),c.from('precos').select('*')]);
+    if(!a.error&&!b.error){LP.planos=(a.data||[]).sort((x,y)=>x.ordem-y.ordem);LP.precos=b.data||[];}}catch(_){}
+  LP.loading=false;const el=$('#auth');if(el&&!el.hidden){const pl=$('#lp-planos-grid');if(pl)pl.innerHTML=lpPlanos();}
+}
+function lpPlanos(){
+  if(!LP.planos)return '<p class="hint">A carregar os planos…</p>';
+  const p=LP.pais;
+  return LP.planos.map(x=>{const pr=LP.precos.find(y=>y.plano_id===x.id&&y.pais===p);
+    const preco=x.id==='formacao'?'<div class="lp-preco">Grátis</div>':pr?'<div class="lp-preco">'+esc(moneyC(pr.mensal,pr.moeda))+'<small> / mês</small></div><div class="small muted">ou '+esc(moneyC(pr.anual,pr.moeda))+' por ano</div>':'<div class="small muted">Preço sob consulta</div>';
+    return '<div class="lp-card lp-plan'+(x.id==='profissional'?' lp-dest':'')+'">'+(x.id==='profissional'?'<span class="lp-tag">Mais escolhido</span>':'')+'<h3>'+esc(x.nome)+'</h3>'+preco+'<p>'+esc(x.descricao||'')+'</p><ul class="lst small"><li>'+x.max_empresas+' empresa'+(x.max_empresas>1?'s':'')+'</li><li>Até '+x.max_utilizadores+' utilizador'+(x.max_utilizadores>1?'es':'')+' por empresa</li><li>SAF-T: '+(x.oficial?'sim':'não')+'</li></ul><button class="btn '+(x.id==='formacao'?'':'pri')+'" data-au="criar">'+(x.id==='formacao'?'Começar grátis':'Criar conta')+'</button></div>';}).join('');
+}
+function landingHTML(){
+  const feat=[['Registar operações','Escreva a operação em linguagem simples ou use um dos formulários (vendas, compras, salários, impostos, imobilizado, empréstimos). O lançamento é criado automaticamente.'],
+   ['Livros contabilísticos','Diário numerado, razão de cada conta, balancete e contas correntes de clientes e fornecedores.'],
+   ['Demonstrações financeiras','Balanço, demonstração de resultados e fluxos de caixa, por mês e por exercício.'],
+   ['Fecho do mês e do exercício','Amortizações, apuramento do IVA, reconciliação bancária, imposto sobre os lucros e abertura do ano seguinte.'],
+   ['Fiscalidade e SAF-T','Exporta o SAF-T de contabilidade (Angola e Portugal) e importa as faturas do seu software de faturação certificado.'],
+   ['Equipa e segurança','Cada empresa com a sua equipa e papéis (dono, contabilista, lançador, consulta). Meses fechados ficam bloqueados e todas as alterações ficam registadas.']];
+  const nav=[['lp-func','Funcionalidades'],['lp-quem','Para quem'],['lp-planos','Planos'],['lp-como','Como funciona'],['lp-contacto','Contacto']];
+  return '<div class="lp">'+
+  '<header class="lp-top"><div class="lp-in"><div class="row" style="gap:8px"><span class="mark" aria-hidden="true"><i></i><i></i></span><strong class="lp-logo">FinanDobra</strong></div>'+
+   '<nav class="lp-nav" aria-label="Secções da página">'+nav.map(([id,t])=>'<button class="lp-link" data-lpgo="'+id+'">'+t+'</button>').join('')+'</nav>'+
+   '<div class="row lp-acts" style="gap:8px"><button class="btn" data-au="entrar">Entrar</button><button class="btn pri" data-au="criar">Criar conta</button></div></div></header>'+
+  '<section class="lp-hero"><div class="lp-in"><p class="lp-eyebrow">Angola · Portugal · Moçambique · Brasil</p><h1>Contabilidade em partidas dobradas, simples e explicada.</h1><p class="lp-sub">Escreva o que aconteceu, por exemplo «Vendi 250.000 a dinheiro», e a FinanDobra faz o lançamento, o diário, o balancete, as demonstrações financeiras e o SAF-T.</p>'+
+   '<div class="row" style="gap:10px;flex-wrap:wrap"><button class="btn pri lp-big" data-au="criar">Criar conta grátis</button><button class="btn lp-big" data-au="entrar">Já tenho conta</button></div><p class="small muted" style="margin-top:10px">Plano Formação gratuito, sem cartão. Os seus dados ficam privados e só a sua equipa os vê.</p></div></section>'+
+  '<section id="lp-func" class="lp-sec"><div class="lp-in"><h2>O que a FinanDobra faz</h2><div class="lp-grid3">'+feat.map(([t,d])=>'<div class="lp-card"><h3>'+t+'</h3><p>'+d+'</p></div>').join('')+'</div></div></section>'+
+  '<section id="lp-quem" class="lp-sec lp-alt"><div class="lp-in"><h2>Para quem é</h2><div class="lp-grid3">'+
+   '<div class="lp-card"><h3>Pequenas e médias empresas</h3><p>Faça a sua contabilidade do dia a dia sem termos complicados e tenha os relatórios sempre prontos.</p></div>'+
+   '<div class="lp-card"><h3>Contabilistas e gabinetes</h3><p>Acompanhe várias empresas clientes, convide a equipa e importe a faturação de cada cliente todos os meses.</p></div>'+
+   '<div class="lp-card"><h3>Estudantes e professores</h3><p>O Modo Professor explica cada lançamento. Empresas de exemplo prontas para aulas e exercícios.</p></div></div>'+
+   '<h3 style="margin-top:26px">Planos de contas incluídos</h3><div class="lp-grid4"><div class="lp-mini"><b>Angola</b><span>PGC · SAF-T (AO) · IVA 14 %</span></div><div class="lp-mini"><b>Portugal</b><span>SNC · SAF-T (PT) · IVA 23 %</span></div><div class="lp-mini"><b>Moçambique</b><span>PGC-NIRF · IVA 16 %</span></div><div class="lp-mini"><b>Brasil</b><span>Simples Nacional · DAS</span></div></div></div></section>'+
+  '<section id="lp-planos" class="lp-sec"><div class="lp-in"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:flex-end"><h2 style="margin:0">Planos</h2><label class="small" for="lpPais">Preços para <select id="lpPais">'+Object.entries(PAIS_NOME).map(([k,v])=>'<option value="'+k+'"'+(k===LP.pais?' selected':'')+'>'+v+'</option>').join('')+'</select></label></div>'+
+   '<div id="lp-planos-grid" class="lp-grid4" style="margin-top:16px">'+lpPlanos()+'</div><p class="small muted">Pagamento por transferência, Multicaixa Express, MB WAY, M-Pesa, Pix ou cartão (Payoneer). O plano é ativado depois de confirmado o pagamento.</p></div></section>'+
+  '<section id="lp-como" class="lp-sec lp-alt"><div class="lp-in"><h2>Como funciona</h2><ol class="lp-steps"><li><b>Crie a sua conta</b><span>Com o seu email e uma palavra-passe. Confirme o email que vai receber.</span></li><li><b>Crie a empresa</b><span>Escolha o país e o plano de contas. Pode começar com uma empresa de exemplo.</span></li><li><b>Registe e acompanhe</b><span>Lance as operações ou importe a faturação. Diário, balancete, balanço e SAF-T ficam prontos.</span></li></ol>'+
+   '<div class="row" style="gap:10px;margin-top:18px"><button class="btn pri lp-big" data-au="criar">Criar conta grátis</button></div></div></section>'+
+  '<section id="lp-contacto" class="lp-sec"><div class="lp-in"><h2>Contacto</h2><p>Dúvidas, demonstrações para gabinetes ou escolas: <a href="mailto:'+LP_CONTACTO+'">'+LP_CONTACTO+'</a></p></div></section>'+
+  '<footer class="lp-foot"><div class="lp-in"><span>© 2026 FinanDobra · Contabilidade simples para empresas</span><span class="muted">Versão '+esc(APP_VER)+'</span></div></footer>'+
+  (LP.open?'<div class="lp-modal" role="dialog" aria-modal="true" aria-label="Entrar na FinanDobra"><div class="lp-modal-bg" data-lpclose="1"></div><div class="lp-modal-box"><button class="lp-x" data-lpclose="1" aria-label="Fechar">×</button>__AUTH__</div></div>':'')+
+  '</div>';
+}
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-lpgo]');if(g){e.preventDefault();const t=document.getElementById(g.dataset.lpgo);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});return;}
+  const c=e.target.closest('[data-lpclose]');if(c){e.preventDefault();LP.open=false;showAuth();}
+});
+document.addEventListener('change',e=>{if(e.target.id==='lpPais'){LP.pais=e.target.value;const pl=$('#lp-planos-grid');if(pl)pl.innerHTML=lpPlanos();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&LP.open&&authMode!=='nova'){LP.open=false;showAuth();}});
+
 let authMode='entrar';
 function authHTML(msg,kind){
   const t={entrar:['Entrar','Entre com o seu email e palavra-passe.'],criar:['Criar conta','Depois de criar a conta, confirme o email que vai receber.'],recuperar:['Recuperar palavra-passe','Enviamos um link para definir uma nova palavra-passe.'],nova:['Nova palavra-passe','Escreva a nova palavra-passe.']}[authMode];
@@ -793,10 +967,16 @@ function authHTML(msg,kind){
   '<button class="btn pri" type="submit">'+t[0]+'</button></form>'+
   '<div class="row auth-links">'+(authMode!=='entrar'?'<button class="btn ghost sm" data-au="entrar">Já tenho conta</button>':'<button class="btn ghost sm" data-au="criar">Criar conta</button><button class="btn ghost sm" data-au="recuperar">Esqueci-me da palavra-passe</button>')+'</div></div>';
 }
-function showAuth(msg,kind){let el=$('#auth');if(!el){el=document.createElement('div');el.id='auth';el.className='auth';document.body.appendChild(el);}el.hidden=false;el.innerHTML=authHTML(msg,kind);const f=$('#auEmail')||$('#auPass');if(f)f.focus();}
-function hideAuth(){const el=$('#auth');if(el)el.hidden=true;}
+function showAuth(msg,kind){let el=$('#auth');if(!el){el=document.createElement('div');el.id='auth';el.className='auth';document.body.appendChild(el);}
+  if(msg||authMode==='nova')LP.open=true;
+  const keep=el.hidden?0:el.scrollTop;el.hidden=false;document.body.classList.add('lp-on');
+  el.innerHTML=landingHTML().replace('__AUTH__',authHTML(msg,kind));el.scrollTop=keep;
+  if(LP.open){const f=$('#auEmail')||$('#auPass');if(f)f.focus();}
+  lpLoad();
+}
+function hideAuth(){const el=$('#auth');if(el)el.hidden=true;LP.open=false;document.body.classList.remove('lp-on');}
 function authTxt(e){const m=String((e&&e.message)||e||'');if(/Invalid login/i.test(m))return 'Email ou palavra-passe errados.';if(/not confirmed/i.test(m))return 'Ainda não confirmou o email. Veja a sua caixa de correio (e o spam).';if(/already registered|already been registered/i.test(m))return 'Já existe uma conta com este email. Use "Já tenho conta".';if(/at least|Password should/i.test(m))return 'A palavra-passe deve ter pelo menos 8 caracteres.';if(/rate limit/i.test(m))return 'Muitas tentativas. Espere alguns minutos.';return m||'Ocorreu um erro.';}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-au]');if(!b)return;e.preventDefault();authMode=b.dataset.au;showAuth();});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-au]');if(!b)return;e.preventDefault();authMode=b.dataset.au;LP.open=true;showAuth();});
 document.addEventListener('submit',async e=>{
   if(e.target.id!=='authForm')return;e.preventDefault();const c=SB.init();const em=($('#auEmail')||{}).value,pw=($('#auPass')||{}).value;const back=location.origin+location.pathname;
   const btn=e.target.querySelector('button[type=submit]');btn.disabled=true;
@@ -869,6 +1049,16 @@ function plPodeCriar(){
   if(n>=p.max_empresas){toast('O plano '+p.nome+' permite '+p.max_empresas+' empresa'+(p.max_empresas>1?'s':'')+'. Para criar mais, mude de plano em «Plano e pagamento».');location.hash='#plano';return false;}
   return true;
 }
+
+/* Instruções de pagamento: ligações e emails clicáveis (o texto é escapado antes; só http/https e mailto) */
+function ligar(txt,ref){
+  return esc(txt).replace(/(https?:\/\/[^\s<]+[^\s<.,;:!?)\]])|(\bwww\.[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[^\s<]*[^\s<.,;:!?)\]])?)|([A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,})/gi,(m,url,www,mail)=>{
+    if(url)return '<a href="'+url+'" target="_blank" rel="noopener noreferrer">'+url+'</a>';
+    if(www)return '<a href="https://'+www+'" target="_blank" rel="noopener noreferrer">'+www+'</a>';
+    const sub=ref?'?subject='+encodeURIComponent('Comprovativo de pagamento '+ref):'';
+    return '<a href="mailto:'+mail+sub+'">'+mail+'</a>';
+  });
+}
 function vPlano(){
   const top='<div class="top"><div><h2>Plano e pagamento</h2><div class="muted small">Escolha o pacote da FinanDobra. A ativação é feita depois de confirmado o pagamento.</div></div></div>';
   if(store.kind!=='sb')return top+'<div class="card"><p style="margin:0">Os planos estão disponíveis na versão com conta (com servidor). Nesta versão, tudo funciona sem limites, com os dados guardados neste navegador.</p></div>';
@@ -883,7 +1073,7 @@ function vPlano(){
   const cur='<div class="card"><h3>O seu plano: '+esc(p.nome||'—')+'</h3><ul class="lst" style="margin-bottom:0"><li>Empresas: <b>'+nDono+' de '+(p.max_empresas||'—')+'</b> (empresas de que é dono)</li><li>Utilizadores por empresa: até <b>'+(p.max_utilizadores||'—')+'</b>, incluindo o dono</li><li>Exportação do SAF-T: <b>'+(p.oficial?'sim':'não')+'</b></li><li>Válido até: <b>'+(p.id==='formacao'?'sem prazo':dmy(s.valido_ate))+'</b></li></ul>'+aviso+'</div>';
   let ped='';
   if(s.pedido_plano){const pr=PL.precos.find(x=>x.plano_id===s.pedido_plano&&x.pais===s.pais);const ins=(PL.pag.find(x=>x.pais===s.pais)||{}).instrucoes||'Contacte a FinanDobra para saber como pagar.';const val=pr?(s.pedido_periodo==='anual'?pr.anual:pr.mensal):null;
-    ped='<div class="card" style="border-color:var(--accent)"><h3>Pedido à espera de pagamento</h3><div class="fields"><div><div class="small muted">Plano</div><b>'+esc(plNome(s.pedido_plano))+' · '+(s.pedido_periodo==='anual'?'anual':'mensal')+'</b></div><div><div class="small muted">Valor</div><b>'+(val!=null?esc(moneyC(val,pr.moeda)):'—')+'</b></div><div><div class="small muted">Referência</div><b class="num">'+esc(s.referencia||'')+'</b></div></div><h4 style="margin:14px 0 4px">Como pagar ('+esc(PAIS_NOME[s.pais]||s.pais)+')</h4><p style="margin:0;white-space:pre-line">'+esc(ins)+'</p><p class="small muted">Pedido feito em '+dmy(s.pedido_em)+'. A ativação é feita depois de confirmado o pagamento, normalmente em 1 dia útil.</p><button class="btn ghost sm" data-act="plCancel">Cancelar pedido</button></div>';}
+    ped='<div class="card" style="border-color:var(--accent)"><h3>Pedido à espera de pagamento</h3><div class="fields"><div><div class="small muted">Plano</div><b>'+esc(plNome(s.pedido_plano))+' · '+(s.pedido_periodo==='anual'?'anual':'mensal')+'</b></div><div><div class="small muted">Valor</div><b>'+(val!=null?esc(moneyC(val,pr.moeda)):'—')+'</b></div><div><div class="small muted">Referência</div><b class="num">'+esc(s.referencia||'')+'</b></div></div><h4 style="margin:14px 0 4px">Como pagar ('+esc(PAIS_NOME[s.pais]||s.pais)+')</h4><p style="margin:0;white-space:pre-line" class="pl-ins">'+ligar(ins,s.referencia)+'</p><p class="small muted">Pedido feito em '+dmy(s.pedido_em)+'. A ativação é feita depois de confirmado o pagamento, normalmente em 1 dia útil.</p><button class="btn ghost sm" data-act="plCancel">Cancelar pedido</button></div>';}
   const cards=(PL.planos||[]).map(x=>{const pr=PL.precos.find(y=>y.plano_id===x.id&&y.pais===pais);const atual=x.id===p.id;
     const preco=x.id==='formacao'?'<div class="pl-preco">Grátis</div>':pr?'<div class="pl-preco">'+esc(moneyC(pr.mensal,pr.moeda))+'<small> / mês</small></div><div class="small muted">ou '+esc(moneyC(pr.anual,pr.moeda))+' / ano'+(pr.anual<pr.mensal*12?' (poupa '+esc(moneyC(pr.mensal*12-pr.anual,pr.moeda))+')':'')+'</div>':'<div class="small muted">Sem preço definido para '+esc(PAIS_NOME[pais])+'.</div>';
     const bt=atual?'<span class="pill good">Plano atual</span>'+(x.id!=='formacao'&&pr?' <button class="btn sm" data-act="plPedir" data-p="'+x.id+'" data-per="anual">Renovar (anual)</button>':''):(x.id!=='formacao'&&pr?'<button class="btn pri sm" data-act="plPedir" data-p="'+x.id+'" data-per="mensal">Pedir · mensal</button> <button class="btn sm" data-act="plPedir" data-p="'+x.id+'" data-per="anual">Pedir · anual</button>':'');
@@ -1011,7 +1201,7 @@ function vPainel(){
   const from=sel+'-01',to=monthEnd(sel);
   const vn=nat('sales',from,to)+nat('services',from,to),r=result(from,to),cash=CASH.reduce((s,c)=>s+raw(c,null,to),0),iva=ivaPos(to);
   const cli=raw('clients',null,to),forn=-raw('suppliers',null,to);
-  const costs=ROLES.filter(a=>a.k==='G').map(a=>({c:a.c,v:nat(a.c,from,to)})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);const max=costs.length?costs[0].v:1;
+  const costs=RL().filter(a=>a.k==='G').map(a=>({c:a.c,v:nat(a.c,from,to)})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);const max=costs.length?costs[0].v:1;
   const num=numbering();const recent=S.entries.slice().sort((a,b)=>b.date.localeCompare(a.date)||num[b.id]-num[a.id]).slice(0,6);
   return topBar(S.empresa||'A sua empresa','Resumo de '+monthLabel(sel)+(S.nif?' · NIF '+esc(S.nif):''))+
   '<div class="card quick"><h3>Que operação aconteceu?</h3><form id="nlForm"><input type="text" id="nlIn" placeholder="Ex.: '+esc(chips()[0])+'" autocomplete="off" aria-label="Descreva a operação"><button class="btn pri" type="submit">Propor lançamento</button></form>'+
@@ -1126,14 +1316,17 @@ function vDemo(){
   '<tr class="sub"><td>'+esc(BS().pnc)+'</td><td class="n">'+fmt(bs.PNC)+'</td></tr>'+rowsOf(bs.pnc)+'<tr class="sub"><td>'+esc(BS().pc)+'</td><td class="n">'+fmt(bs.PC)+'</td></tr>'+rowsOf(bs.pc)+
   '<tr class="tot"><td>Total do '+esc(BS().cp.toLowerCase())+' e passivo</td><td class="n">'+fmt(bs.CP+PT)+'</td></tr></tbody></table></div><p class="'+(ok?'okmsg':'err')+'" style="margin:10px 0 0">'+(ok?'Ativo = Passivo + '+BS().cp+' ✓':'O balanço não fecha: verifique o balancete.')+'</p></div>';
   const v=(c,f,t)=>nat(c,f,t);
-  const dr=(f,t)=>{const vn=v('sales',f,t)+v('services',f,t),op=vn-v('salesTax',f,t)+v('othInc',f,t)-v('cogs',f,t)-v('wages',f,t)-v('wageCh',f,t)-v('fse',f,t)-v('taxes',f,t)-v('othCost',f,t)-v('deprec',f,t),fin=v('finInc',f,t)-v('finCost',f,t);return {vn,op,fin,rai:op+fin,rl:op+fin-v('incomeTax',f,t)};};
+  const XR=RL().filter(a=>a.x&&(a.k==='R'||a.k==='G')).map(a=>({c:a.c,k:a.k,g:drGrupo(xRec(a.c).raw)}));
+  const xs=(g,f,t)=>XR.filter(z=>z.g===g).reduce((s,z)=>s+(z.k==='R'?1:-1)*v(z.c,f,t),0);
+  const dr=(f,t)=>{const vn=v('sales',f,t)+v('services',f,t),op=vn-v('salesTax',f,t)+v('othInc',f,t)-v('cogs',f,t)-v('wages',f,t)-v('wageCh',f,t)-v('fse',f,t)-v('taxes',f,t)-v('othCost',f,t)-v('deprec',f,t)+xs('op',f,t),fin=v('finInc',f,t)-v('finCost',f,t)+xs('fin',f,t),nop=xs('nop',f,t);return {vn,op,fin,nop,rai:op+fin+nop,rl:op+fin+nop-v('incomeTax',f,t)+xs('tax',f,t)};};
+  const XL=(g,k)=>XR.filter(z=>z.g===g&&(!k||z.k===k)).map(z=>L(accName(z.c),z.c,z.k==='G')).join('');
   const M=dr(from,to),Y=dr(y0,to);
   const L=(l,c,neg)=>{const a=v(c,from,to),b=v(c,y0,to);if(!a&&!b)return '';return '<tr><td class="cr">'+esc(l)+'</td><td class="n">'+fmt(neg?-a:a)+'</td><td class="n">'+fmt(neg?-b:b)+'</td></tr>';};
   const T2=(l,a,b,cls)=>'<tr class="'+(cls||'sub')+'"><td>'+esc(l)+'</td><td class="n">'+fmt(a)+'</td><td class="n">'+fmt(b)+'</td></tr>';
   const drH='<div class="card"><h3>'+esc(P().dr)+'</h3><div class="tbl-wrap"><table><thead><tr><th></th><th class="n">'+esc(MESES[+sel.slice(5)-1])+'</th><th class="n">Exercício '+sel.slice(0,4)+'</th></tr></thead><tbody>'+
   L(accName('sales'),'sales')+L(accName('services'),'services')+T2(P().vn||'Volume de negócios',M.vn,Y.vn)+L(accName('salesTax'),'salesTax',1)+L(accName('othInc'),'othInc')+
-  L(accName('cogs'),'cogs',1)+L(accName('wages'),'wages',1)+L(accName('wageCh'),'wageCh',1)+L(accName('fse'),'fse',1)+L(accName('taxes'),'taxes',1)+L(accName('othCost'),'othCost',1)+L(accName('deprec'),'deprec',1)+
-  T2('Resultado operacional',M.op,Y.op)+L(accName('finInc'),'finInc')+L(accName('finCost'),'finCost',1)+T2('Resultado antes de impostos',M.rai,Y.rai)+L(accName('incomeTax'),'incomeTax',1)+T2('Resultado líquido',M.rl,Y.rl,'tot')+'</tbody></table></div></div>';
+  XL('op','R')+L(accName('cogs'),'cogs',1)+L(accName('wages'),'wages',1)+L(accName('wageCh'),'wageCh',1)+L(accName('fse'),'fse',1)+L(accName('taxes'),'taxes',1)+L(accName('othCost'),'othCost',1)+L(accName('deprec'),'deprec',1)+XL('op','G')+
+  T2('Resultado operacional',M.op,Y.op)+L(accName('finInc'),'finInc')+L(accName('finCost'),'finCost',1)+XL('fin')+(XR.some(z=>z.g==='fin')?T2('Resultados financeiros',M.fin,Y.fin):'')+(XR.some(z=>z.g==='nop')?XL('nop')+T2('Resultados não operacionais e extraordinários',M.nop,Y.nop):'')+T2('Resultado antes de impostos',M.rai,Y.rai)+L(accName('incomeTax'),'incomeTax',1)+XL('tax')+T2('Resultado líquido',M.rl,Y.rl,'tot')+'</tbody></table></div></div>';
   // fluxos de caixa – método direto
   const ini=CASH.reduce((s,c)=>s+raw(c,null,dayBefore(from)),0);const it={op:{},inv:{},fin:{}},tot={op:0,inv:0,fin:0};
   for(const e of S.entries.filter(e=>e.date>=from&&e.date<=to)){
@@ -1205,7 +1398,7 @@ function vEmpresa(){
   (ui.confirmReset?'<span class="err small">Apagar todos os lançamentos desta empresa? As definições e subcontas mantêm-se.</span><button class="btn sm" data-act="resetNo">Não</button><button class="btn sm danger" data-act="resetYes">Sim, apagar</button>':'<button class="btn sm" data-act="resetBook">Apagar lançamentos desta empresa</button><button class="btn sm" data-act="loadEx">Carregar a empresa de exemplo</button>')+'</div>'+
   '<h3 style="margin-top:18px">Mapa do imobilizado</h3>'+(S.bens.length?'<div class="tbl-wrap"><table><thead><tr><th>Bem</th><th>Início</th><th class="n">Custo</th><th class="n">Vida (meses)</th><th class="n">Amort. mensal</th></tr></thead><tbody>'+S.bens.map(b=>'<tr><td>'+esc(b.desc)+'</td><td class="num" style="text-align:left">'+b.inicio+'</td><td class="n">'+fmt(b.custo)+'</td><td class="n">'+b.meses+'</td><td class="n">'+fmt(b.custo/b.meses)+'</td></tr>').join('')+'</tbody></table></div>':'<p class="hint">Sem bens. Use «Compra de imobilizado».</p>')+
   '</div><div class="card"><h3>Plano de contas</h3><p class="hint" style="margin-top:0">'+esc(P().ref)+'. Códigos de subcontas indicativos; confirme com o normativo em vigor.</p><div class="tbl-wrap"><table><thead><tr><th>Conta</th><th>Designação</th><th>Grupo</th><th>Natureza</th>'+(P().valid?'<th title="✓ confirmado · ? a validar">Fonte</th>':'')+'<th></th></tr></thead><tbody>'+
-  ACC.map(a=>'<tr><td class="code">'+esc(code(a.c))+'</td><td'+(a.sub?' class="cr"':'')+'>'+esc(accName(a.c))+'</td><td class="small">'+esc(kl(a.k))+(a.contra?' (regularizadora)':'')+'</td><td class="small muted">'+(a.k==='T'?'Devedora ou credora':a.d?'Devedora':'Credora')+'</td>'+(P().valid?'<td>'+((P().acc[base(a.c)]||[])[2]==='v'?'<span class="okmsg" title="Código confirmado em fonte do PGC-NIRF">✓</span>':'<span class="small" style="color:var(--warn);font-weight:600" title="Código a validar">?</span>')+'</td>':'')+'<td style="white-space:nowrap">'+(a.sub&&!hasSubs(a.c)?'<button class="btn ghost sm danger" data-act="subDel" data-r="'+a.c+'">Remover</button>':'')+'<button class="btn ghost sm" data-act="subNew" data-r="'+a.c+'">+ Subconta</button></td></tr>'+(ui.subFor===a.c?subForm(a.c):'')).join('')+'</tbody></table></div></div></div>';
+  ACC.map(a=>'<tr><td class="code">'+esc(code(a.c))+'</td><td'+(a.sub?' class="cr"':'')+'>'+esc(accName(a.c))+'</td><td class="small">'+esc(kl(a.k))+(a.contra?' (regularizadora)':'')+'</td><td class="small muted">'+(a.k==='T'?'Devedora ou credora':a.d?'Devedora':'Credora')+'</td>'+(P().valid?'<td>'+((P().acc[base(a.c)]||[])[2]==='v'?'<span class="okmsg" title="Código confirmado em fonte do PGC-NIRF">✓</span>':'<span class="small" style="color:var(--warn);font-weight:600" title="Código a validar">?</span>')+'</td>':'')+'<td style="white-space:nowrap">'+(a.sub&&!hasSubs(a.c)?'<button class="btn ghost sm danger" data-act="subDel" data-r="'+a.c+'">Remover</button>':'')+(a.x&&!hasSubs(a.c)?'<button class="btn ghost sm danger" data-act="pgcDel" data-r="'+a.c+'">Remover</button>':'')+'<button class="btn ghost sm" data-act="subNew" data-r="'+a.c+'">+ Subconta</button></td></tr>'+(ui.subFor===a.c?subForm(a.c):'')).join('')+'</tbody></table></div></div></div>'+pgcCard();
 }
 
 /* ============ Porquê a FinanDobra (comparação) ============ */
@@ -1256,7 +1449,7 @@ function vComparar(){
 /* ============ SAF-T de contabilidade ============ */
 const SAFT_CFG={
  AO:{ver:'1.01_01',ns:'urn:OECD:StandardAuditFile-Tax:AO_1.01_01',pais:'AO',taxo:false,validador:'validador SAF-T (AO) da AGT',
-  par:{'11':'Imobilizações corpóreas','18':'Amortizações acumuladas','26':'Mercadorias','31':'Clientes','32':'Fornecedores','33':'Empréstimos','34':'Estado','34.5':'Imposto sobre o valor acrescentado (IVA)','36':'Pessoal','37':'Outros valores a receber e a pagar','43':'Depósitos à ordem','45':'Caixa','51':'Capital','55':'Reservas','59':'Resultados transitados','61':'Vendas','62':'Prestações de serviços','66':'Proveitos e ganhos financeiros','68':'Outros proveitos e ganhos operacionais','71':'Custo das mercadorias vendidas e das matérias consumidas','72':'Custos com o pessoal','73':'Amortizações do exercício','75':'Outros custos e perdas operacionais','76':'Custos e perdas financeiros','78':'Outros custos e perdas','87':'Imposto sobre os lucros','88':'Resultado líquido do exercício'}},
+  par:{'11':'Imobilizações corpóreas','18':'Amortizações acumuladas','26':'Mercadorias','31':'Clientes','32':'Fornecedores','33':'Empréstimos','34':'Estado','34.5':'Imposto sobre o valor acrescentado (IVA)','34.9':'Outros impostos','36':'Pessoal','37':'Outros valores a receber e a pagar','43':'Depósitos à ordem','45':'Caixa','51':'Capital','55':'Reservas legais','81':'Resultados transitados','61':'Vendas','62':'Prestações de serviços','63':'Outros proveitos operacionais','66':'Proveitos e ganhos financeiros','68':'Outros proveitos e ganhos não operacionais','71':'Custo das existências vendidas e das matérias consumidas','72':'Custos com o pessoal','73':'Amortizações do exercício','75':'Outros custos e perdas operacionais','76':'Custos e perdas financeiros','78':'Outros custos e perdas','87':'Imposto sobre os lucros','88':'Resultado líquido do exercício'}},
  PT:{ver:'1.04_01',ns:'urn:OECD:StandardAuditFile-Tax:PT_1.04_01',pais:'PT',taxo:true,validador:'validador do e-fatura / Portal das Finanças',
   par:{'11':'Caixa','12':'Depósitos à ordem','21':'Clientes','22':'Fornecedores','23':'Pessoal','24':'Estado e outros entes públicos','243':'Imposto sobre o valor acrescentado (IVA)','25':'Financiamentos obtidos','27':'Outras contas a receber e a pagar','32':'Mercadorias','43':'Ativos fixos tangíveis','51':'Capital subscrito','55':'Reservas','56':'Resultados transitados','61':'Custo das mercadorias vendidas e das matérias consumidas','62':'Fornecimentos e serviços externos','63':'Gastos com o pessoal','64':'Gastos de depreciação e de amortização','68':'Outros gastos','69':'Gastos de financiamento','71':'Vendas','72':'Prestações de serviços','78':'Outros rendimentos','79':'Juros, dividendos e outros rendimentos similares','81':'Resultado líquido do período','812':'Imposto sobre o rendimento do período'}}
 };
@@ -1276,7 +1469,7 @@ function saftData(year){
   const acc=new Map();
   for(const r of used){const c=code(r);acc.set(c,{id:c,desc:accName(r),cat:'GM',role:r,open:op[r],close:op[r]+mv[r].d-mv[r].c});}
   const cfg=SAFT_CFG[S.pais];
-  for(const g of [...acc.values()]){let c=g.id;while((c=parentOf(c))){if(!acc.has(c)){const rr=ACC.find(a=>code(a.c)===c);acc.set(c,{id:c,desc:rr?accName(rr.c):(cfg.par[c]||('Conta '+c)),cat:'GA',open:0,close:0});};}}
+  for(const g of [...acc.values()]){let c=g.id;while((c=parentOf(c))){if(!acc.has(c)){const rr=ACC.find(a=>code(a.c)===c);acc.set(c,{id:c,desc:rr?accName(rr.c):(cfg.par[c]||(S.pais==='AO'&&CATD[c]?nice(CATD[c].name):('Conta '+c))),cat:'GA',open:0,close:0});};}}
   for(const a of acc.values()){const p=parentOf(a.id);a.parent=p;if(!p)a.cat=a.cat==='GM'?'GM':'GR';}
   for(const a of acc.values())if(a.cat==='GM'){let p=a.parent;while(p){const x=acc.get(p);x.open+=a.open;x.close+=a.close;p=x.parent;}}
   const accounts=[...acc.values()].sort((a,b)=>a.id.localeCompare(b.id));
@@ -1431,7 +1624,7 @@ const EX=y=>{S.exercicios=S.exercicios||{};return (S.exercicios[y]=S.exercicios[
 const yEntries=(y,tpl)=>S.entries.filter(e=>e.date.slice(0,4)===y&&e.tpl===tpl&&!e.revBy&&!e.revOf);
 function taxCalc(y){
   const x=EX(y),y0=y+'-01-01',y1=y+'-12-31';
-  let R=0,G=0;for(const a of ROLES){if(a.k==='R')R+=nat(a.c,y0,y1);if(a.k==='G'&&a.c!=='incomeTax')G+=nat(a.c,y0,y1);}
+  let R=0,G=0;for(const a of RL()){if(a.k==='R')R+=nat(a.c,y0,y1);if(a.k==='G'&&a.c!=='incomeTax'&&!(a.x&&drGrupo(xRec(a.c).raw)==='tax'))G+=nat(a.c,y0,y1);}
   const rai=R-G,mc=Math.max(0,rai+(+x.aj||0)-(+x.prej||0));
   let imp=0;if(S.pais==='PT'&&x.pme){imp=Math.min(mc,50000)*0.15+Math.max(0,mc-50000)*(x.taxa/100);}else imp=mc*(x.taxa/100);
   imp+=mc*((+x.derrama||0)/100);
@@ -1523,7 +1716,7 @@ function parseSaftInvoices(xml){
 function importPlan(d,opt){
   const have=new Set(S.entries.map(e=>e.doc).filter(Boolean));const rows=[];
   for(const v of d.invs){const isNC=v.type==='NC';const paid=['FR','FS','VD','TV'].includes(v.type);
-    let skip='';if(v.status==='A')skip='Anulado';else if(have.has(v.no))skip='Já registado (mesmo n.º)';else if(!v.date)skip='Sem data';else if(isClosed(v.date))skip='Mês fechado';
+    let skip='';if(v.status==='A')skip='Anulado';else if(v.dupBatch)skip='Repetido noutro ficheiro';else if(have.has(v.no))skip='Já registado (mesmo n.º)';else if(!v.date)skip='Sem data';else if(isClosed(v.date))skip='Mês fechado';
     const sg=isNC?-1:1,netP=Math.abs(v.netP),netS=Math.abs(v.netS),tax=Math.abs(v.tax),wht=Math.abs(v.wht),gross=Math.abs(v.gross)||r2(netP+netS+tax);
     const deb=paid?opt.caixa:'clients';const L=[];
     const recv=r2(gross-wht);
@@ -1531,14 +1724,49 @@ function importPlan(d,opt){
     else{if(netP>0)L.push({a:'sales',d:netP});if(netS>0)L.push({a:'services',d:netS});if(tax>0)L.push({a:'vatLiq',d:tax});if(wht>0)L.push({a:'taxProfit',c:wht});L.push({a:deb,c:recv,e:deb==='clients'?v.cliente:''});}
     const ok=entryOK(L).ok;if(!skip&&!ok)skip='Totais não batem certo';
     rows.push({kind:'inv',v,lines:L,skip,desc:(isNC?'Nota de crédito':paid?'Venda a pronto':'Venda')+' – '+v.cliente,tpl:isNC?'nc':'venda'});}
-  if(opt.pays)for(const p of d.pays){let skip='';if(p.status==='A')skip='Anulado';else if(have.has(p.no))skip='Já registado (mesmo n.º)';else if(isClosed(p.date))skip='Mês fechado';else if(!(p.gross>0))skip='Sem valor';
+  if(opt.pays)for(const p of d.pays){let skip='';if(p.status==='A')skip='Anulado';else if(p.dupBatch)skip='Repetido noutro ficheiro';else if(have.has(p.no))skip='Já registado (mesmo n.º)';else if(isClosed(p.date))skip='Mês fechado';else if(!(p.gross>0))skip='Sem valor';
     const meio=p.mech==='NU'?leaf('cash'):opt.banco;rows.push({kind:'pay',v:p,lines:[{a:meio,d:p.gross},{a:'clients',c:p.gross,e:p.cliente}],skip,desc:'Recebimento – '+p.cliente,tpl:'recebimento'});}
   return rows;
+}
+
+/* ---- Faturação: resumo por mês, comparação com a contabilidade, histórico e guia ---- */
+function impMonths(ok){
+  const m={};for(const r of ok){if(r.kind!=='inv')continue;const k=monthOf(r.v.date),sg=r.v.type==='NC'?-1:1;const x=m[k]=m[k]||{n:0,base:0,iva:0};x.n++;x.base+=sg*(Math.abs(r.v.netP)+Math.abs(r.v.netS));x.iva+=sg*Math.abs(r.v.tax);}
+  const ks=Object.keys(m).sort();if(!ks.length)return '';
+  return '<h4 style="margin:4px 0 6px">Resumo por mês</h4><div class="tbl-wrap" style="margin-bottom:12px"><table class="small"><thead><tr><th>Mês</th><th class="n">Documentos</th><th class="n">Base a importar</th><th class="n">IVA a importar</th><th class="n">IVA liquidado já na contabilidade</th><th class="n">IVA depois de importar</th></tr></thead><tbody>'+
+   ks.map(k=>{const x=m[k],ja=ivaLiqMes(k).total;return '<tr><td>'+esc(monthLabel(k))+'</td><td class="n">'+x.n+'</td><td class="n">'+fmt(x.base)+'</td><td class="n">'+fmt(x.iva)+'</td><td class="n">'+fmt(ja)+'</td><td class="n"><b>'+fmt(ja+x.iva)+'</b></td></tr>';}).join('')+'</tbody></table></div>';
+}
+// IVA liquidado e vendas de um mês, separando o que veio da faturação importada (sem contar o apuramento nem o fecho)
+function ivaLiqMes(k){
+  const from=k+'-01',to=monthEnd(k);let total=0,imp=0,vt=0,vi=0;
+  for(const e of S.entries){if(e.date<from||e.date>to||e.tpl==='apur_iva'||e.tpl==='apur_res')continue;
+    for(const l of e.lines){const b=base(l.a),v=(+l.c||0)-(+l.d||0);if(b==='vatLiq'){total+=v;if(e.imported)imp+=v;}if(b==='sales'||b==='services'){vt+=v;if(e.imported)vi+=v;}}}
+  return {total:r2(total),imp:r2(imp),vt:r2(vt),vi:r2(vi)};
+}
+function impRecon(){
+  const ms=[...new Set(S.entries.filter(e=>e.imported).map(e=>monthOf(e.date)))].sort().reverse().slice(0,12);
+  if(!ms.length)return '';
+  const rows=ms.map(k=>{const x=ivaLiqMes(k),dv=r2(x.vt-x.vi),di=r2(x.total-x.imp);const alert=Math.abs(dv)>0.5||Math.abs(di)>0.5;
+    return '<tr><td>'+esc(monthLabel(k))+'</td><td class="n">'+fmt(x.vi)+'</td><td class="n">'+fmt(x.vt)+'</td><td class="n'+(Math.abs(dv)>0.5?' err':'')+'">'+fmt(dv)+'</td><td class="n">'+fmt(x.imp)+'</td><td class="n">'+fmt(x.total)+'</td><td class="n'+(Math.abs(di)>0.5?' err':'')+'">'+fmt(di)+'</td><td>'+(alert?'<span style="color:var(--warn);font-weight:600">Rever</span>':'<span class="okmsg">✓</span>')+'</td></tr>';}).join('');
+  return '<div class="card"><h3>Faturação e contabilidade</h3><p class="hint" style="margin-top:0">Compara, mês a mês, o que veio do software de faturação com o total registado na contabilidade. Uma diferença quer dizer que há vendas ou IVA lançados à mão, sem fatura importada: confirme se existe a respetiva fatura.</p>'+
+   '<div class="tbl-wrap"><table class="small"><thead><tr><th>Mês</th><th class="n" title="Vendas e serviços nas faturas importadas">Vendas<br>faturação</th><th class="n" title="Vendas e serviços na contabilidade">Vendas<br>contabilidade</th><th class="n">Dif.</th><th class="n" title="IVA nas faturas importadas">IVA<br>faturação</th><th class="n" title="IVA liquidado na contabilidade">IVA<br>contabilidade</th><th class="n">Dif.</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+}
+function impHist(){
+  const H=S.imports||[];if(!H.length)return '';
+  return '<div class="card"><h3>Histórico de importações</h3><div class="tbl-wrap"><table class="small"><thead><tr><th>Data</th><th>Ficheiros</th><th>Período</th><th class="n">Documentos</th><th class="n">Base</th><th class="n">IVA</th></tr></thead><tbody>'+
+   H.slice(0,12).map(h=>'<tr><td class="num" style="text-align:left">'+esc(dateLabel(h.em.slice(0,10)))+'</td><td>'+esc(h.ficheiros)+'</td><td class="num" style="text-align:left">'+(h.de?esc(dateLabel(h.de))+' a '+esc(dateLabel(h.ate)):'—')+'</td><td class="n">'+h.n+'</td><td class="n">'+fmt(h.base)+'</td><td class="n">'+fmt(h.iva)+'</td></tr>').join('')+'</tbody></table></div><p class="small muted" style="margin-bottom:0">Os documentos já importados são reconhecidos pelo número e não entram duas vezes.</p></div>';
+}
+function impGuia(){
+  return '<div class="card"><h3>Como exportar o SAF-T de faturação</h3><p class="hint" style="margin-top:0">Exporte um ficheiro por mês. Os nomes dos menus podem variar com a versão e o país do programa.</p><ul class="lst">'+
+   '<li><b>Cegid Vendus:</b> no menu lateral do backoffice, <i>Autoridade Tributária › SAF-T › Exportar</i>; escolha o ano e o mês e descarregue o ficheiro.</li>'+
+   '<li><b>Cegid Primavera:</b> <i>Impostos › Ficheiros SAF-T</i>; crie o ficheiro com a finalidade de faturação, escolha o período e exporte.</li>'+
+   '<li><b>Cegid PHC e outros programas certificados:</b> procure a opção de exportação do SAF-T (AO ou PT) no módulo de faturação ou de impostos, e escolha "faturação" e o mês pretendido.</li>'+
+   '<li><b>Se o contabilista não tem acesso:</b> peça ao cliente para criar um utilizador de consulta para o contabilista no programa de faturação, ou para enviar o ficheiro .xml todos os meses.</li></ul></div>';
 }
 function vImportar(){
   if(S.pais==='BR')return '<div class="top"><div><h2>Importar faturação</h2></div></div><div class="card"><h3>Brasil</h3><p>No Brasil, as vendas são documentadas em NF-e, NFC-e e NFS-e (XML próprios, não SAF-T). A importação desses ficheiros ainda não está disponível. Por agora, registe as vendas em «Registar operação» ou com as frases do Painel.</p></div>';
   const head='<div class="top"><div><h2>Importar faturação (SAF-T)</h2><div class="muted small">Traga as faturas, notas de crédito e recibos emitidos no software de faturação certificado. O lançamento contabilístico é criado automaticamente.</div></div></div>';
-  let body='<div class="card"><h3>1. Escolher o ficheiro</h3><p class="hint" style="margin-top:0">Ficheiro SAF-T de faturação (.xml) exportado do Cegid Primavera, PHC, Vendus ou outro software certificado. Aceita SAF-T (AO) e SAF-T (PT).</p><input type="file" id="impFile" accept=".xml,text/xml,application/xml"> '+(imp&&imp.fileName?'<span class="small muted">'+esc(imp.fileName)+'</span>':'')+(imp&&imp.err?'<p class="err">'+esc(imp.err)+'</p>':'')+'</div>';
+  let body='<div class="card"><h3>1. Escolher o ficheiro</h3><p class="hint" style="margin-top:0">Ficheiro SAF-T de faturação (.xml) exportado do Cegid Primavera, PHC, Vendus ou outro software certificado. Aceita SAF-T (AO) e SAF-T (PT).</p><input type="file" id="impFile" multiple accept=".xml,text/xml,application/xml"> <span class="small muted">Pode escolher vários ficheiros de uma vez (por exemplo, um por mês).</span>'+(imp&&imp.files&&imp.files.length?'<div class="tbl-wrap" style="margin-top:10px"><table class="small"><thead><tr><th>Ficheiro</th><th>Empresa</th><th>NIF</th><th>Período</th><th class="n">Faturas</th><th class="n">Recibos</th></tr></thead><tbody>'+imp.files.map(f=>'<tr><td>'+esc(f.name)+'</td>'+(f.err?'<td colspan="5" class="err">'+esc(f.err)+'</td>':'<td>'+esc(f.nome||'—')+'</td><td class="num" style="text-align:left">'+esc(f.nif||'—')+(f.nif&&S.nif&&f.nif.replace(/\s/g,'')!==String(S.nif).replace(/\s/g,'')?' <span class="err">≠ empresa</span>':'')+'</td><td class="num" style="text-align:left">'+(f.de?dateLabel(f.de)+' a '+dateLabel(f.ate):'—')+'</td><td class="n">'+f.n+'</td><td class="n">'+f.np+'</td>')+'</tr>').join('')+'</tbody></table></div>':'')+(imp&&imp.err?'<p class="err">'+esc(imp.err)+'</p>':'')+'</div>';
   if(imp&&imp.d){const d=imp.d,o=imp.opt;const rows=importPlan(d,o);const ok=rows.filter(r=>!r.skip);
     const mism=d.nif&&S.nif&&d.nif.replace(/\s/g,'')!==String(S.nif).replace(/\s/g,'');
     const sum=(arr,f)=>arr.reduce((s,r)=>s+f(r),0);const invs=ok.filter(r=>r.kind==='inv');
@@ -1548,16 +1776,26 @@ function vImportar(){
       '<p class="hint">Produtos (tipo P) vão para '+esc(lab(leaf('sales')))+'; serviços (tipo S) para '+esc(lab(leaf('services')))+'. As retenções na fonte feitas pelos clientes vão para '+esc(lab(leaf('taxProfit')))+'. O custo das mercadorias vendidas não vem no SAF-T de faturação: lance-o no fim do mês a partir do inventário.</p></div>'+
       '<div class="card"><div class="row" style="margin-bottom:8px"><h3>3. Pré-visualização</h3><span class="spacer"></span><span class="small muted">'+ok.length+' a importar · '+(rows.length-ok.length)+' ignorados</span></div>'+
       '<div class="grid g4" style="margin-bottom:12px">'+kpi('Documentos a importar',String(ok.length),invs.length+' faturas/notas · '+(ok.length-invs.length)+' recibos')+kpi('Base tributável',fmt(sum(invs,r=>(r.v.type==='NC'?-1:1)*(Math.abs(r.v.netP)+Math.abs(r.v.netS)))),'vendas e serviços, líquido de notas de crédito')+kpi('IVA liquidado',fmt(sum(invs,r=>(r.v.type==='NC'?-1:1)*Math.abs(r.v.tax))),'a entregar ao Estado')+kpi('Ignorados',String(rows.length-ok.length),'anulados, duplicados ou em meses fechados')+'</div>'+
-      '<div class="tbl-wrap" style="max-height:420px;overflow:auto"><table class="small"><thead><tr><th>Documento</th><th>Data</th><th>Cliente</th><th class="n">Base</th><th class="n">IVA</th><th class="n">Total</th><th>Lançamento</th><th>Estado</th></tr></thead><tbody>'+
+      impMonths(ok)+'<div class="tbl-wrap" style="max-height:420px;overflow:auto"><table class="small"><thead><tr><th>Documento</th><th>Data</th><th>Cliente</th><th class="n">Base</th><th class="n">IVA</th><th class="n">Total</th><th>Lançamento</th><th>Estado</th></tr></thead><tbody>'+
       rows.map(r=>{const v=r.v,inv=r.kind==='inv';return '<tr'+(r.skip?' class="agg"':'')+'><td class="num" style="text-align:left">'+esc(v.no)+'</td><td class="num" style="text-align:left">'+esc(v.date?dateLabel(v.date):'')+'</td><td>'+esc(v.cliente)+'</td><td class="n">'+(inv?fmt(Math.abs(v.netP)+Math.abs(v.netS)):'')+'</td><td class="n">'+(inv?fmt(Math.abs(v.tax)):'')+'</td><td class="n">'+fmt(Math.abs(v.gross))+'</td><td class="small" style="font-family:var(--mono)">'+formula(leafLines(r.lines))+'</td><td>'+(r.skip?'<span style="color:var(--warn)">'+esc(r.skip)+'</span>':'<span class="okmsg">OK</span>')+'</td></tr>';}).join('')+'</tbody></table></div>'+
       '<div class="row" style="margin-top:12px"><button class="btn" data-act="impClear">Limpar</button><span class="spacer"></span><button class="btn pri" data-act="impGo"'+(ok.length?'':' disabled')+'>Importar '+ok.length+' documentos</button></div></div>';}
-  return head+body;
+  return head+body+impRecon()+impHist()+impGuia();
 }
-async function impLoad(file){
-  imp={fileName:file.name,opt:{caixa:leaf('cash'),banco:leaf('bank'),pays:true}};
-  try{if(file.size>20*1024*1024)throw new Error('Ficheiro demasiado grande (máximo 20 MB).');const t=await file.text();imp.d=parseSaftInvoices(t);
-    if(!imp.d.invs.length&&!imp.d.pays.length)throw new Error('O ficheiro não tem faturas (SalesInvoices) nem recibos (Payments).');}
-  catch(e){imp.err=e.message||'Não foi possível ler o ficheiro.';imp.d=null;}
+async function impLoad(files){
+  if(!Array.isArray(files))files=[files];
+  imp={fileName:files.map(f=>f.name).join(', '),files:[],opt:{caixa:leaf('cash'),banco:leaf('bank'),pays:true}};
+  const all={nif:'',nome:'',ver:'',pais:'',invs:[],pays:[]};const seenI=new Set(),seenP=new Set();
+  for(const f of files){const info={name:f.name,err:'',n:0,np:0,nif:'',nome:'',de:'',ate:''};
+    try{if(f.size>20*1024*1024)throw new Error('Ficheiro demasiado grande (máximo 20 MB).');const d=parseSaftInvoices(await f.text());
+      if(!d.invs.length&&!d.pays.length)throw new Error('Não tem faturas (SalesInvoices) nem recibos (Payments).');
+      Object.assign(info,{nif:d.nif,nome:d.nome,pais:d.pais,ver:d.ver,n:d.invs.length,np:d.pays.length});
+      const ds=[...d.invs,...d.pays].map(x=>x.date).filter(Boolean).sort();info.de=ds[0]||'';info.ate=ds[ds.length-1]||'';
+      if(!all.nif){Object.assign(all,{nif:d.nif,nome:d.nome,ver:d.ver,pais:d.pais});}
+      for(const v of d.invs){if(seenI.has(v.no)){v.dupBatch=1;}seenI.add(v.no);v.src=f.name;all.invs.push(v);}
+      for(const p of d.pays){if(seenP.has(p.no)){p.dupBatch=1;}seenP.add(p.no);p.src=f.name;all.pays.push(p);}
+    }catch(e){info.err=e.message||'Não foi possível ler o ficheiro.';}
+    imp.files.push(info);}
+  if(all.invs.length||all.pays.length)imp.d=all;else{imp.d=null;imp.err=imp.files.map(x=>x.name+': '+x.err).join(' · ');}
   render();
 }
 function impGo(){
@@ -1566,11 +1804,12 @@ function impGo(){
   for(const r of rows){const e={id:uid(),date:r.v.date,desc:r.desc,doc:r.v.no,tpl:r.tpl,imported:1,lines:leafLines(r.lines).filter(l=>+l.d>0||+l.c>0).map(l=>{const x={a:l.a};if(+l.d>0)x.d=r2(+l.d);if(+l.c>0)x.c=r2(+l.c);if(l.e)x.e=l.e;return x;})};
     S.entries.push(e);n++;if(r.v.nif&&r.v.cliente){for(const l of e.lines)if(l.e)sa.nifs[l.a+'|'+l.e]=r.v.nif;}}
   logA('Importação SAF-T faturação',n+' documentos de '+imp.fileName);
+  {const inv=rows.filter(r=>r.kind==='inv'),sg=r=>r.v.type==='NC'?-1:1;const ds=rows.map(r=>r.v.date).sort();S.imports=S.imports||[];S.imports.unshift({em:new Date().toISOString(),ficheiros:imp.fileName,n,de:ds[0],ate:ds[ds.length-1],base:r2(inv.reduce((t,r)=>t+sg(r)*(Math.abs(r.v.netP)+Math.abs(r.v.netS)),0)),iva:r2(inv.reduce((t,r)=>t+sg(r)*Math.abs(r.v.tax),0))});S.imports=S.imports.slice(0,60);}
   sel=latestMonth();imp=null;location.hash='#diario';commit(n+' documentos importados para o diário.');
 }
 
 /* ============ Início (apresentação da app) ============ */
-const APP_VER='0.9 · 2 de novembro de 2026';
+const APP_VER='0.13 · 5 de novembro de 2026';
 const PAIS_RES={AO:'IVA 14 %, IRT, INSS, Imposto Industrial, SAF-T (AO)',PT:'IVA 23 %, IRS, Segurança Social, IRC, SAF-T (PT)',MZ:'IVA 16 %, IRPS, INSS, IRPC',BR:'DAS, INSS, IRRF, FGTS'};
 function demoPhrase(){const x=P().ex,v=n=>fmt(n*x.scale);return 'Vendi '+v(300000)+' ao cliente '+x.cli+' a crédito, custo '+v(180000);}
 function vInicio(){
@@ -1672,7 +1911,7 @@ document.addEventListener('change',e=>{
   if(t.id==='coIn'){S.empresa=t.value.trim();commit('Nome guardado.');}
   if(t.id==='nifIn'){S.nif=t.value.trim();commit();}
   if(t.id==='curSel'){S.moeda=t.value;commit();}
-  if(t.id==='paisSel'){S.pais=t.value;const p=P();S.moeda=p.moeda;S.ivaTaxa=p.iva;S.iva=p.iva>0;applyPack();commit('Pacote de '+p.pais+' aplicado: '+p.ref.split(' (')[0]+'.');}
+  if(t.id==='paisSel'){if(XC().length&&t.value!=='AO'){t.value=S.pais;return toast('Esta empresa tem contas do PGC de Angola ativadas. Para usar outro país, crie uma empresa nova.');}S.pais=t.value;const p=P();S.moeda=p.moeda;S.ivaTaxa=p.iva;S.iva=p.iva>0;applyPack();commit('Pacote de '+p.pais+' aplicado: '+p.ref.split(' (')[0]+'.');}
   if(t.id==='ivaTx'){const v=parseAmount(t.value);if(v>=0){S.ivaTaxa=v;commit();}}
   if(t.id==='simplesTx'){const v=parseAmount(t.value);if(v>=0){S.simplesRate=v;commit();}}
   if(t.id==='ivaOn'){S.iva=t.checked;commit();}
@@ -1681,7 +1920,7 @@ document.addEventListener('change',e=>{
   if(t.id==='exSel'){exYear=t.value;render();return;}
   if(t.dataset.ex){const v=parseAmount(String(t.value).replace('−','-'));if(isNaN(v))return toast('Valor inválido.');EX(exYear)[t.dataset.ex]=v;commit();return;}
   if(t.dataset.exb){EX(exYear)[t.dataset.exb]=t.checked;commit();return;}
-  if(t.id==='impFile'&&t.files&&t.files[0]){impLoad(t.files[0]);return;}
+  if(t.id==='impFile'&&t.files&&t.files.length){impLoad([...t.files]);return;}
   if(t.id==='impCx'&&imp){imp.opt.caixa=t.value;render();return;}
   if(t.id==='impBk'&&imp){imp.opt.banco=t.value;render();return;}
   if(t.id==='impPays'&&imp){imp.opt.pays=t.checked;render();return;}
