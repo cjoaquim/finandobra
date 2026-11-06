@@ -280,6 +280,27 @@ body.lp-on{overflow:hidden}
 .auth-links{margin-top:12px;gap:6px;flex-wrap:wrap}
 #who{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:0;overflow-wrap:anywhere}
 nav a[hidden]{display:none!important}
+/* Aprender */
+.ap-list{display:grid;gap:10px}
+.ap-item{display:flex;align-items:center;gap:14px;text-align:left;cursor:pointer;width:100%;font:inherit;color:inherit}
+.ap-item:hover{border-color:var(--accent)}
+.ap-n{flex:0 0 34px;height:34px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700}
+.ap-it{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.ap-teo{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.ap-txt p,.ap-txt{line-height:1.55}.ap-txt .lst{margin:6px 0}
+.ap-cls td{padding:3px 8px;border-bottom:1px solid var(--rule)}.ap-cls td:first-child{font-family:var(--mono);font-weight:700;width:28px}
+.ap-mini{margin-top:6px}.ap-mini th,.ap-mini td{padding:5px 8px;border-bottom:1px solid var(--rule)}.ap-mini .num{text-align:right;font-family:var(--mono);white-space:nowrap}.ap-mini .code{font-family:var(--mono);font-weight:600}
+.ap-exemplo{border-left:4px solid var(--accent)}
+.ap-je th,.ap-je td{padding:5px 6px;vertical-align:top}.ap-je th.num{text-align:right}.ap-je td:nth-child(2),.ap-je td:nth-child(3){width:22%}
+.ap-fb{font-size:12.5px;margin-top:3px;font-weight:500}.ap-fb.good{color:var(--good)}.ap-fb.bad{color:var(--bad)}.ap-fb.warn{color:var(--warn)}
+.ap-res{margin-top:12px;padding:10px 14px;border-radius:8px}.ap-res.good{background:var(--good-soft);color:var(--good)}.ap-res.bad{background:var(--bad-soft);color:var(--ink)}.ap-res .lst{margin:6px 0 0}
+.ap-sol{margin-top:12px;padding:10px 14px;border-radius:8px;border:1px dashed var(--rule)}
+.ap-done{border-left:4px solid var(--good)}
+.ap-q{border:0;padding:0;margin:0 0 16px}.ap-q legend{font-weight:600;margin-bottom:6px;padding:0}
+.ap-opt{display:block;width:100%;text-align:left;margin:4px 0;padding:8px 12px;border:1px solid var(--rule);border-radius:7px;background:var(--surface);color:var(--ink);cursor:pointer;font:inherit}
+.ap-opt:hover:not(:disabled){border-color:var(--accent)}.ap-opt.good{background:var(--good-soft);border-color:var(--good)}.ap-opt.bad{background:var(--bad-soft);border-color:var(--bad)}.ap-opt:disabled{cursor:default}
+.ap-cert{border-left:4px solid var(--good)}
+
 .pl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:14px}.pl-grid .card{margin:0}.pl-card{display:flex;flex-direction:column;gap:6px}.pl-card .row{margin-top:auto}.pl-cur{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}.pl-ins a{color:var(--accent);font-weight:600;text-decoration:underline;overflow-wrap:anywhere}
 .pl-preco{font-family:var(--mono);font-size:22px;font-weight:500}.pl-preco small{font-size:13px;color:var(--muted)}
 </style>
@@ -312,6 +333,7 @@ nav a[hidden]{display:none!important}
       <a href="#empresa">Empresa e plano <span class="k">09</span></a>
       <a href="#saft">SAF-T <span class="k">10</span></a>
       <a href="#importar">Importar faturação <span class="k">11</span></a>
+      <a href="#aprender">Aprender <span class="k">13</span></a>
       <a href="#comparar">Porquê a FinanDobra <span class="k">12</span></a>
       <a href="#plano" id="navPlano" hidden>Plano e pagamento <span class="k">P</span></a>
       <a href="#admin" id="navAdmin" hidden>Administração <span class="k">A</span></a>
@@ -923,10 +945,10 @@ function lpPlanos(){
 }
 function landingHTML(){
   const feat=[['Registar operações','Escreva a operação em linguagem simples ou use um dos formulários (vendas, compras, salários, impostos, imobilizado, empréstimos). O lançamento é criado automaticamente.'],
-   ['Livros contabilísticos','Diário numerado, razão de cada conta, balancete e contas correntes de clientes e fornecedores.'],
-   ['Demonstrações financeiras','Balanço, demonstração de resultados e fluxos de caixa, por mês e por exercício.'],
+   ['Livros e demonstrações','Diário, razão, balancete, contas correntes de clientes e fornecedores, balanço, demonstração de resultados e fluxos de caixa.'],
    ['Fecho do mês e do exercício','Amortizações, apuramento do IVA, reconciliação bancária, imposto sobre os lucros e abertura do ano seguinte.'],
    ['Fiscalidade e SAF-T','Exporta o SAF-T de contabilidade (Angola e Portugal) e importa as faturas do seu software de faturação certificado.'],
+   ['Aprender contabilidade','Lições curtas com exercícios de lançamentos corrigidos na hora, com as contas do PGC de Angola. Para estudantes, formandos e novos empreendedores.'],
    ['Equipa e segurança','Cada empresa com a sua equipa e papéis (dono, contabilista, lançador, consulta). Meses fechados ficam bloqueados e todas as alterações ficam registadas.']];
   const nav=[['lp-func','Funcionalidades'],['lp-quem','Para quem'],['lp-planos','Planos'],['lp-como','Como funciona'],['lp-contacto','Contacto']];
   return '<div class="lp">'+
@@ -1185,7 +1207,7 @@ function addEntry(o){
 
 /* ============ Interface ============ */
 let route='painel',ui={tpl:'venda',vals:{},proposal:null,nlErr:'',confirmDel:null,openAcc:null,openEnt:null,manual:null,showProf:{},confirmReset:false};
-const ROUTES=['plano','admin','painel','registar','diario','razao','terceiros','demonstracoes','fecho','empresa','saft','comparar','empresas','exercicio','importar','inicio'];
+const ROUTES=['aprender','plano','admin','painel','registar','diario','razao','terceiros','demonstracoes','fecho','empresa','saft','comparar','empresas','exercicio','importar','inicio'];
 function readRoute(){const h=location.hash.replace('#','');if(ROUTES.includes(h)){route=h;return;}let seen=false;try{seen=!!localStorage.getItem('fd.visto');}catch(_){}route=seen?'painel':'inicio';}
 function monthsAvail(){const set=new Set(S.entries.map(e=>monthOf(e.date)));set.add(monthOf(todayStr()));set.add(sel);return [...set].sort().reverse();}
 function topBar(title,sub){
@@ -1809,7 +1831,7 @@ function impGo(){
 }
 
 /* ============ Início (apresentação da app) ============ */
-const APP_VER='0.13 · 5 de novembro de 2026';
+const APP_VER='0.14 · 5 de novembro de 2026';
 const PAIS_RES={AO:'IVA 14 %, IRT, INSS, Imposto Industrial, SAF-T (AO)',PT:'IVA 23 %, IRS, Segurança Social, IRC, SAF-T (PT)',MZ:'IVA 16 %, IRPS, INSS, IRPC',BR:'DAS, INSS, IRRF, FGTS'};
 function demoPhrase(){const x=P().ex,v=n=>fmt(n*x.scale);return 'Vendi '+v(300000)+' ao cliente '+x.cli+' a crédito, custo '+v(180000);}
 function vInicio(){
@@ -1868,6 +1890,175 @@ function vEmpresas(){
   '<div class="card"><h3>Cópia de segurança</h3><p class="hint" style="margin-top:0">'+(store.kind!=='local'?'Os dados estão na sua conta. Mesmo assim, guarde uma cópia mensal fora da aplicação.':'<b>Atenção:</b> neste momento os dados ficam só neste navegador. Se limpar o navegador ou mudar de computador, perde-os. Descarregue uma cópia regularmente (por exemplo, no fecho de cada mês).')+(()=>{let t=null;try{t=localStorage.getItem('fd.bk');}catch(_){}return t?' Última cópia: '+esc(t.slice(0,10).split('-').reverse().join('/'))+'.':' Ainda não fez nenhuma cópia.';})()+'</p><div class="row"><button class="btn pri" data-act="bkDl">Descarregar cópia (todas as empresas)</button><label class="btn" for="bkIn" style="cursor:pointer">Restaurar de uma cópia…</label><input type="file" id="bkIn" accept=".json,application/json" hidden></div><p class="small muted" style="margin-bottom:0">Restaurar acrescenta as empresas da cópia; uma empresa que já exista é substituída pela versão da cópia.</p></div>'+
   '<div class="card"><h3>Como os dados são guardados</h3><ul class="lst"><li>'+(store.kind==='sb'?'Cada empresa é guardada à parte no servidor da FinanDobra e só é visível para os membros da sua equipa.':'Cada empresa é guardada à parte, de forma privada na sua conta'+(store.kind==='db'?'':' (neste momento, só neste navegador)')+'.')+'</li><li>Cada exercício é dividido em partes mensais: o limite passa a ser por mês (cerca de 600 lançamentos por mês), e não por livro. Não há limite de exercícios.</li><li>Só as partes alteradas são gravadas, o que torna o registo mais rápido.</li><li>O registo de alterações é guardado por ano, até 2.000 registos por ano.</li></ul></div>';
 }
+/* ============ Aprender: módulo de formação com exercícios corrigidos automaticamente (Angola, PGC) ============ */
+// Contas usadas nas soluções = contas que a própria aplicação usa nos lançamentos (pacote AO).
+// Cada linha da solução: {c:código, alt:[códigos alternativos aceites], d:débito | k:crédito, h:pista se faltar}
+const AP_MOD={titulo:'Módulo 1 · Fundamentos da contabilidade em Angola',ref:'PGC – Plano Geral de Contabilidade',moeda:'Kz',lessons:[
+{id:'l1',t:'Partidas dobradas: débito e crédito',min:10,
+ teoria:[
+  ['A ideia principal','Cada operação mexe com pelo menos duas contas. O valor que entra numa conta sai de outra, por isso <b>o total a débito é sempre igual ao total a crédito</b>. É daqui que vem o nome «partidas dobradas».'],
+  ['Débito e crédito','Cada conta tem dois lados: o <b>débito</b> (lado esquerdo) e o <b>crédito</b> (lado direito). Débito e crédito não querem dizer «bom» ou «mau»: indicam só o lado em que se regista o movimento.'],
+  ['A regra para não errar','<ul class="lst"><li><b>Ativo</b> (o que a empresa tem: caixa, bancos, clientes, mercadorias): aumenta a <b>débito</b>, diminui a crédito.</li><li><b>Passivo</b> (o que a empresa deve: fornecedores, Estado, empréstimos) e <b>capital próprio</b>: aumentam a <b>crédito</b>, diminuem a débito.</li><li><b>Custos</b> (classe 7) registam-se a <b>débito</b>; <b>proveitos</b> (classe 6) a <b>crédito</b>.</li></ul>'],
+  ['As classes do PGC','<table class="ap-cls"><tbody><tr><td>1</td><td>Meios fixos e investimentos</td></tr><tr><td>2</td><td>Existências</td></tr><tr><td>3</td><td>Terceiros (clientes, fornecedores, Estado, pessoal)</td></tr><tr><td>4</td><td>Meios monetários (bancos, caixa)</td></tr><tr><td>5</td><td>Capital e reservas</td></tr><tr><td>6</td><td>Proveitos e ganhos por natureza</td></tr><tr><td>7</td><td>Custos e perdas por natureza</td></tr><tr><td>8</td><td>Resultados</td></tr></tbody></table>']],
+ exemplo:{txt:'a empresa deposita no banco 80.000 Kz que estavam na caixa.',L:[['43.1',80000,0],['45.1',0,80000]],nota:'O banco (ativo) aumenta, logo débito. A caixa (ativo) diminui, logo crédito.'},
+ ex:[
+  {id:'l1e1',txt:'Os sócios constituem a empresa e depositam <b>500.000 Kz</b> no banco como capital social.',sol:[{c:'43.1',d:500000,h:'O dinheiro entrou no banco: qual é a conta de depósitos à ordem e de que lado aumenta?'},{c:'51',k:500000,h:'Falta a origem do dinheiro: o capital entregue pelos sócios (classe 5).'}]},
+  {id:'l1e2',txt:'A empresa levanta <b>50.000 Kz</b> do banco para a caixa, para pequenas despesas.',sol:[{c:'45.1',d:50000,h:'A caixa aumentou: regista-se a débito da conta Caixa.'},{c:'43.1',k:50000,h:'O banco diminuiu: regista-se a crédito da conta de depósitos à ordem.'}]}],
+ quiz:[
+  {id:'l1q1',p:'Num lançamento em partidas dobradas, o total a débito…',o:['é sempre igual ao total a crédito','é sempre maior do que o total a crédito','depende do tipo de operação'],r:0,e:'Em cada lançamento, débitos e créditos somam sempre o mesmo valor.'},
+  {id:'l1q2',p:'Entraram 20.000 Kz na caixa. A conta 45 Caixa é movimentada…',o:['a crédito','a débito','nos dois lados'],r:1,e:'A caixa é um ativo: quando aumenta, regista-se a débito.'},
+  {id:'l1q3',p:'Em que classe do PGC estão as vendas e outros proveitos?',o:['Classe 7','Classe 3','Classe 6'],r:2,e:'A classe 6 reúne os proveitos e ganhos por natureza; a classe 7, os custos.'}]},
+{id:'l2',t:'Compras e fornecedores, com IVA',min:12,
+ teoria:[
+  ['A compra de mercadorias','Quando a empresa compra mercadorias para revender, o custo de aquisição entra na conta <b>26.1 Mercadorias</b> (existências), que aumenta a débito.'],
+  ['O IVA da compra','O IVA pago na compra (taxa geral de <b>14 %</b> em Angola) não é custo da empresa: é um valor a recuperar do Estado. Regista-se a débito na conta <b>34.5.2 IVA dedutível</b>, desde que a fatura cumpra os requisitos legais.'],
+  ['A dívida ao fornecedor','Se a compra não for paga logo, a empresa fica a dever o total da fatura (valor + IVA) ao fornecedor. A conta <b>32.1 Fornecedores – correntes</b> é um passivo, por isso aumenta a crédito. Quando a empresa paga, a dívida diminui: débito do fornecedor e crédito do banco ou da caixa.']],
+ exemplo:{txt:'compra de mercadorias a pronto pagamento, por transferência, no valor de 50.000 Kz + IVA 14 % (7.000 Kz).',L:[['26.1',50000,0],['34.5.2',7000,0],['43.1',0,57000]],nota:'Como foi pago logo, não há dívida ao fornecedor: o banco diminui pelo total.'},
+ ex:[
+  {id:'l2e1',txt:'Compra a crédito ao fornecedor «Grossista do Kikolo» de mercadorias no valor de <b>200.000 Kz + IVA 14 %</b>.',sol:[{c:'26.1',alt:['21.2'],d:200000,h:'Falta registar a entrada das mercadorias (existências, classe 2) pelo valor sem IVA.'},{c:'34.5.2',d:28000,h:'Falta o IVA da compra: 14 % de 200.000 Kz, numa conta do Estado que a empresa pode recuperar.'},{c:'32.1',k:228000,h:'Falta a dívida ao fornecedor, pelo total da fatura (valor + IVA).'}]},
+  {id:'l2e2',txt:'Um mês depois, a empresa paga ao fornecedor a fatura anterior (<b>228.000 Kz</b>) por transferência bancária.',sol:[{c:'32.1',d:228000,h:'A dívida ao fornecedor desaparece: a conta de fornecedores é movimentada do lado contrário ao do registo da dívida.'},{c:'43.1',k:228000,h:'O dinheiro saiu do banco: crédito da conta de depósitos à ordem.'}]}],
+ quiz:[
+  {id:'l2q1',p:'O IVA dedutível de uma compra é…',o:['um custo da empresa','um valor a recuperar do Estado','um proveito'],r:1,e:'O IVA dedutível é compensado com o IVA liquidado nas vendas, no apuramento do IVA.'},
+  {id:'l2q2',p:'Numa compra a crédito, a conta 32.1 Fornecedores fica movimentada por…',o:['valor sem IVA','valor do IVA','valor total da fatura, com IVA'],r:2,e:'A empresa deve ao fornecedor tudo o que está na fatura, incluindo o IVA.'},
+  {id:'l2q3',p:'Qual é a taxa geral de IVA em Angola?',o:['14 %','16 %','23 %'],r:0,e:'A taxa geral é de 14 %. Há taxas reduzidas e isenções para alguns bens e serviços.'}]},
+{id:'l3',t:'Vendas, clientes e custo das mercadorias',min:12,
+ teoria:[
+  ['A venda','Na venda de mercadorias, o proveito regista-se a crédito na conta <b>61.3 Vendas – mercadorias</b>, pelo valor sem IVA.'],
+  ['O IVA da venda','O IVA cobrado ao cliente pertence ao Estado: a empresa só o recebe para o entregar depois. Regista-se a crédito na conta <b>34.5.3 IVA liquidado</b>.'],
+  ['O cliente','Se o cliente não pagar logo, fica a dever o total da fatura. A conta <b>31.1 Clientes – correntes</b> é um ativo (um direito a receber) e aumenta a débito.'],
+  ['O custo da mercadoria vendida','Ao vender, a mercadoria sai do armazém. Com inventário permanente, regista-se um segundo lançamento pelo <b>preço de custo</b>: débito de <b>71.6 Custo das mercadorias vendidas</b> e crédito de <b>26.1 Mercadorias</b>. A diferença entre a venda e este custo é a margem.']],
+ exemplo:{txt:'venda a dinheiro (caixa) de 40.000 Kz + IVA 14 % (5.600 Kz).',L:[['45.1',45600,0],['61.3',0,40000],['34.5.3',0,5600]],nota:'A caixa aumenta pelo total que o cliente pagou; a venda e o IVA ficam a crédito.'},
+ ex:[
+  {id:'l3e1',txt:'Venda a crédito ao cliente «Hotel Atlântico» de mercadorias por <b>300.000 Kz + IVA 14 %</b>.',sol:[{c:'31.1',d:342000,h:'Falta o direito a receber do cliente, pelo total da fatura (valor + IVA).'},{c:'61.3',k:300000,h:'Falta o proveito da venda, pelo valor sem IVA (classe 6).'},{c:'34.5.3',k:42000,h:'Falta o IVA cobrado ao cliente: 14 % de 300.000 Kz, que é devido ao Estado.'}]},
+  {id:'l3e2',txt:'As mercadorias vendidas no exercício 1 tinham custado <b>180.000 Kz</b>. Registe a saída do armazém.',sol:[{c:'71.6',d:180000,h:'Falta o custo das mercadorias vendidas (classe 7), a débito.'},{c:'26.1',alt:['21.2'],k:180000,h:'As mercadorias saíram do armazém: a conta de existências diminui.'}]}],
+ quiz:[
+  {id:'l3q1',p:'O IVA liquidado numa venda regista-se…',o:['a crédito, porque é uma dívida ao Estado','a débito, porque é um direito','na conta de vendas'],r:0,e:'O IVA liquidado é um valor que a empresa tem de entregar ao Estado: um passivo, logo crédito.'},
+  {id:'l3q2',p:'Vendeu por 300.000 Kz mercadoria que custou 180.000 Kz. Qual é a margem bruta?',o:['480.000 Kz','120.000 Kz','342.000 Kz'],r:1,e:'Margem = vendas (300.000) − custo das mercadorias vendidas (180.000) = 120.000 Kz. O IVA não entra na margem.'},
+  {id:'l3q3',p:'Quando o cliente pagar a fatura por transferência, o lançamento é…',o:['débito de 31.1 e crédito de 43.1','débito de 61.3 e crédito de 31.1','débito de 43.1 e crédito de 31.1'],r:2,e:'O banco aumenta (débito) e o direito sobre o cliente desaparece (crédito).'}]},
+{id:'l4',t:'Salários, IRT e INSS',min:15,
+ teoria:[
+  ['O processamento do salário','O salário <b>bruto</b> é um custo da empresa: débito de <b>72.2 Remunerações – pessoal</b>. O trabalhador não recebe o bruto todo, porque a empresa retém dois descontos e entrega-os ao Estado.'],
+  ['Os descontos do trabalhador','<ul class="lst"><li><b>INSS do trabalhador: 3 %</b> do salário, a crédito de <b>34.9.4 Segurança Social (INSS)</b>.</li><li><b>IRT</b> (Imposto sobre o Rendimento do Trabalho), calculado pela tabela em vigor, a crédito de <b>34.3 IRT</b>.</li></ul>O valor <b>líquido</b>, o que o trabalhador vai receber, fica a crédito de <b>36.1 Pessoal – remunerações</b> até ser pago.'],
+  ['O encargo da empresa','Além do salário, a empresa paga <b>8 %</b> de INSS por sua conta. É outro custo: débito de <b>72.5 Encargos sobre remunerações</b> e crédito de <b>34.9.4 INSS</b>. No fim, a conta 34.9.4 tem 11 % do salário (3 % + 8 %) para entregar.'],
+  ['Atenção','Neste módulo, o valor do IRT é dado no enunciado, para se concentrar nos lançamentos. Na prática, confirme sempre a tabela de IRT em vigor e as regras de cálculo.']],
+ exemplo:{txt:'pagamento por transferência dos salários líquidos de 90.000 Kz.',L:[['36.1',90000,0],['43.1',0,90000]],nota:'A dívida ao pessoal desaparece (débito) e o banco diminui (crédito).'},
+ ex:[
+  {id:'l4e1',txt:'Processe o salário de março de uma trabalhadora: bruto <b>150.000 Kz</b>; INSS do trabalhador 3 % (<b>4.500 Kz</b>); IRT retido segundo a tabela: <b>10.000 Kz</b>.',sol:[{c:'72.2',d:150000,h:'Falta o custo do salário bruto (classe 7), a débito.'},{c:'34.9.4',k:4500,h:'Falta o desconto de 3 % para a Segurança Social, que a empresa vai entregar ao INSS.'},{c:'34.3',k:10000,h:'Falta o IRT retido, que a empresa entrega ao Estado.'},{c:'36.1',k:135500,h:'Falta o valor líquido a pagar à trabalhadora: bruto menos INSS menos IRT.'}]},
+  {id:'l4e2',txt:'Registe o encargo da empresa com a Segurança Social sobre esse salário: <b>8 % de 150.000 Kz</b>.',sol:[{c:'72.5',d:12000,h:'O encargo patronal é um custo com o pessoal, numa conta diferente da do salário.'},{c:'34.9.4',k:12000,h:'Falta a dívida ao INSS correspondente ao encargo da empresa.'}]}],
+ quiz:[
+  {id:'l4q1',p:'Num salário bruto de 200.000 Kz, quanto é o INSS do trabalhador?',o:['6.000 Kz','16.000 Kz','22.000 Kz'],r:0,e:'3 % de 200.000 = 6.000 Kz. Os 8 % (16.000 Kz) são o encargo da empresa; juntos fazem 22.000 Kz.'},
+  {id:'l4q2',p:'O IRT retido ao trabalhador é…',o:['um custo da empresa','uma dívida da empresa ao Estado','um proveito da empresa'],r:1,e:'A empresa só retém o imposto e entrega-o ao Estado: fica a crédito numa conta da classe 3.'},
+  {id:'l4q3',p:'Qual destas contas regista o custo do INSS por conta da empresa?',o:['72.2 Remunerações – pessoal','36.1 Pessoal – remunerações','72.5 Encargos sobre remunerações'],r:2,e:'O encargo patronal vai para 72.5; a 72.2 é só para o salário bruto.'}]},
+{id:'l5',t:'Apuramento do IVA e balancete',min:12,
+ teoria:[
+  ['Porque se apura o IVA','No fim de cada mês, compara-se o IVA <b>liquidado</b> nas vendas (34.5.3) com o IVA <b>dedutível</b> das compras (34.5.2). Se o liquidado for maior, a diferença é IVA a pagar ao Estado; se for menor, é IVA a recuperar.'],
+  ['O lançamento de apuramento','As duas contas ficam com saldo zero: debita-se o IVA liquidado e credita-se o IVA dedutível. A diferença vai para <b>34.5.5 IVA – apuramento</b>: a crédito se houver imposto a pagar, a débito se houver imposto a recuperar. A FinanDobra faz este lançamento sozinha no «Fecho do mês».'],
+  ['O balancete','O balancete lista todas as contas com os totais a débito, a crédito e o saldo. Como cada lançamento está equilibrado, <b>a soma dos saldos devedores é igual à soma dos saldos credores</b>. Se não for, há um erro de registo. É a primeira verificação antes das demonstrações financeiras.']],
+ exemplo:{txt:'num mês, o IVA liquidado foi de 10.000 Kz e o dedutível de 15.000 Kz.',L:[['34.5.3',10000,0],['34.5.5',5000,0],['34.5.2',0,15000]],nota:'O dedutível é maior: a diferença de 5.000 Kz fica a débito, como IVA a recuperar.'},
+ ex:[
+  {id:'l5e1',txt:'Faça o apuramento do IVA de março, usando as lições anteriores: IVA liquidado nas vendas <b>42.000 Kz</b>; IVA dedutível das compras <b>28.000 Kz</b>.',sol:[{c:'34.5.3',d:42000,h:'O IVA liquidado tem de ficar a zero: movimente a conta do lado contrário ao seu saldo.'},{c:'34.5.2',k:28000,h:'O IVA dedutível tem de ficar a zero: movimente a conta do lado contrário ao seu saldo.'},{c:'34.5.5',alt:['34.5.6'],k:14000,h:'Falta a diferença (42.000 − 28.000) na conta de apuramento do IVA. Há imposto a pagar ou a recuperar?'}]},
+  {id:'l5e2',txt:'No mês seguinte, a empresa paga ao Estado o IVA apurado (<b>14.000 Kz</b>) por transferência.',sol:[{c:'34.5.5',alt:['34.5.6'],d:14000,h:'A dívida de IVA ao Estado desaparece: débito da conta onde ficou o imposto a pagar.'},{c:'43.1',k:14000,h:'O dinheiro saiu do banco: crédito de depósitos à ordem.'}]}],
+ quiz:[
+  {id:'l5q1',p:'IVA liquidado de 42.000 Kz e dedutível de 28.000 Kz. Qual é o resultado?',o:['14.000 Kz a recuperar','14.000 Kz a pagar','70.000 Kz a pagar'],r:1,e:'O liquidado é maior do que o dedutível: 42.000 − 28.000 = 14.000 Kz a pagar ao Estado.'},
+  {id:'l5q2',p:'No balancete, a soma dos saldos devedores…',o:['é igual à soma dos saldos credores','é sempre maior','não tem relação com os saldos credores'],r:0,e:'Como cada lançamento está equilibrado, o balancete também fica equilibrado.'},
+  {id:'l5q3',p:'O balancete não fecha (débitos diferentes dos créditos). O que significa?',o:['A empresa teve prejuízo','Falta pagar o IVA','Há um erro de registo a corrigir'],r:2,e:'Um balancete desequilibrado indica sempre um erro de registo. O prejuízo não desequilibra o balancete.'}]}
+]};
+
+const AP={l:null,rows:{},res:{},tries:{},qa:{},showSol:{}};
+function apKey(){try{return 'fd.aprender'+(store&&store.kind==='sb'&&SB&&SB.user?'.'+SB.user.id:'');}catch(_){return 'fd.aprender';}}
+function apProg(){if(AP._p&&AP._pk===apKey())return AP._p;let p=null;try{p=JSON.parse(localStorage.getItem(apKey())||'null');}catch(_){}AP._p=Object.assign({ex:{},qz:{}},p||{});AP._pk=apKey();return AP._p;}
+function apSave(){try{localStorage.setItem(apKey(),JSON.stringify(apProg()));}catch(_){}}
+function apLesson(id){return AP_MOD.lessons.find(l=>l.id===id);}
+function apState(l){const p=apProg();const e=l.ex.filter(x=>p.ex[x.id]).length,q=l.quiz.filter(x=>p.qz[x.id]).length,tot=l.ex.length+l.quiz.length;return {done:e+q,tot,ok:e+q===tot};}
+function apNum(s){s=String(s||'').replace(/\s/g,'').replace(/Kz/i,'');if(!s)return 0;if(s.includes(','))s=s.replace(/\./g,'').replace(',','.');else s=s.replace(/\./g,'');const n=parseFloat(s);return isNaN(n)?NaN:n;}
+function apCode(s){s=String(s||'').trim();const m=s.match(/^[0-9]+(?:\.[0-9]+)*/);return m?m[0]:'';}
+const AP_NAMES=(()=>{const m=new Map();try{for(const r of CAT_AO)m.set(r[1],r[2]);}catch(_){}try{for(const [c,n] of Object.values(PACKS.AO.acc))m.set(c,n);}catch(_){}return m;})();
+function apName(c){return AP_NAMES.get(c)||'';}
+function apExists(c){if(AP_NAMES.has(c))return true;return [...AP_NAMES.keys()].some(k=>k.startsWith(c+'.'));}
+function apMatchCode(e,s){const cands=[s.c,...(s.alt||[])];for(const x of cands){if(e===x||e.startsWith(x+'.'))return 'ok';}for(const x of cands){if(x.startsWith(e+'.'))return 'pai';}return '';}
+function apCheck(ex){
+  const rows=(AP.rows[ex.id]||[]).map((r,i)=>({i,raw:r[0]||'',c:apCode(r[0]),d:apNum(r[1]),k:apNum(r[2])})).filter(r=>r.raw.trim()||r.d||r.k);
+  const out={rows:{},miss:[],msgs:[],ok:false};
+  if(!rows.length){out.msgs.push(['bad','Preencha pelo menos duas linhas do lançamento.']);return out;}
+  for(const r of rows){if(isNaN(r.d)||isNaN(r.k)){out.rows[r.i]=['bad','Valor inválido. Escreva só números, por exemplo 228000 ou 228.000.'];continue;}if(r.d&&r.k){out.rows[r.i]=['bad','Use só um dos lados: débito ou crédito.'];continue;}if(!r.c){out.rows[r.i]=['bad','Indique o código da conta, por exemplo 43.1.'];continue;}if(!apExists(r.c)){out.rows[r.i]=['bad','A conta '+r.c+' não existe no PGC.'];continue;}if(!r.d&&!r.k){out.rows[r.i]=['bad','Falta o valor a débito ou a crédito.'];continue;}}
+  const valid=rows.filter(r=>!out.rows[r.i]);
+  const used=new Set();
+  for(const r of valid){const side=r.d?'d':'k',amt=r.d||r.k;const j=ex.sol.findIndex((s,jj)=>!used.has(jj)&&apMatchCode(r.c,s)&&((side==='d'&&s.d)||(side==='k'&&s.k))&&Math.abs((s.d||s.k)-amt)<0.5);
+    if(j>=0){used.add(j);const pai=apMatchCode(r.c,ex.sol[j])==='pai';out.rows[r.i]=pai?['warn','Aceite. No dia a dia use a subconta '+ex.sol[j].c+' ('+apName(ex.sol[j].c)+').']:['good','Certo.'];r.m=true;}}
+  for(const r of valid){if(r.m)continue;const side=r.d?'d':'k',amt=r.d||r.k;
+    const jc=ex.sol.findIndex((s,jj)=>!used.has(jj)&&apMatchCode(r.c,s));
+    if(jc>=0){const s=ex.sol[jc];const sSide=s.d?'d':'k';out.rows[r.i]=['bad',sSide!==side?'A conta está certa, mas está do lado errado.':'A conta está certa, mas o valor não. Reveja o cálculo.'];continue;}
+    const jv=ex.sol.findIndex((s,jj)=>!used.has(jj)&&((side==='d'&&s.d)||(side==='k'&&s.k))&&Math.abs((s.d||s.k)-amt)<0.5);
+    out.rows[r.i]=['bad',jv>=0?'O valor e o lado estão certos, mas a conta não é esta'+(apName(r.c)?' ('+apName(r.c)+')':'')+'.':'Esta linha não faz parte deste lançamento.'];}
+  ex.sol.forEach((s,j)=>{if(!used.has(j))out.miss.push(s.h);});
+  const td=valid.reduce((a,r)=>a+(r.d||0),0),tk=valid.reduce((a,r)=>a+(r.k||0),0);
+  if(Math.abs(td-tk)>0.5)out.msgs.push(['bad','O lançamento não está equilibrado: débito '+fmt(td)+' e crédito '+fmt(tk)+'. Em partidas dobradas, os dois totais têm de ser iguais.']);
+  out.ok=used.size===ex.sol.length&&Object.values(out.rows).every(x=>x[0]!=='bad');
+  return out;}
+
+function apRowsHTML(ex){
+  const n=Math.max(ex.sol.length,2);if(!AP.rows[ex.id])AP.rows[ex.id]=Array.from({length:n},()=>['','','']);
+  const R=AP.rows[ex.id],res=AP.res[ex.id];
+  return '<div class="tbl-wrap"><table class="ap-je"><thead><tr><th style="width:46%">Conta (código)</th><th class="num">Débito</th><th class="num">Crédito</th><th></th></tr></thead><tbody>'+
+  R.map((r,i)=>{const fb=res&&res.rows[i];const nm=apName(apCode(r[0]));return '<tr><td><input type="text" list="apAccList" data-apr="'+ex.id+':'+i+':0" value="'+esc(r[0])+'" placeholder="ex.: 43.1" autocomplete="off" aria-label="Conta, linha '+(i+1)+'">'+(nm&&!/[a-zà-ú]/i.test(r[0])?'<div class="small muted">'+esc(nm)+'</div>':'')+(fb?'<div class="ap-fb '+fb[0]+'">'+esc(fb[1])+'</div>':'')+'</td><td><input type="text" inputmode="decimal" class="amt" data-apr="'+ex.id+':'+i+':1" value="'+esc(r[1])+'" aria-label="Débito, linha '+(i+1)+'"></td><td><input type="text" inputmode="decimal" class="amt" data-apr="'+ex.id+':'+i+':2" value="'+esc(r[2])+'" aria-label="Crédito, linha '+(i+1)+'"></td><td>'+(R.length>2?'<button class="btn ghost sm" data-apact="del" data-ex="'+ex.id+'" data-i="'+i+'" title="Remover linha" aria-label="Remover linha">×</button>':'')+'</td></tr>';}).join('')+
+  '</tbody></table></div>';}
+function apExHTML(ex,k){
+  const p=apProg(),res=AP.res[ex.id],done=!!p.ex[ex.id],tries=AP.tries[ex.id]||0;
+  return '<div class="card ap-ex'+(done?' ap-done':'')+'" id="ap-'+ex.id+'"><div class="row" style="justify-content:space-between;align-items:baseline"><h3 style="margin:0">Exercício '+k+'</h3>'+(done?'<span class="pill good">Resolvido</span>':'')+'</div>'+
+  '<p>'+ex.txt+'</p><p class="hint" style="margin-top:-4px">Registe o lançamento: escreva o código da conta (pode escolher da lista) e o valor no lado certo.</p>'+
+  apRowsHTML(ex)+
+  '<div class="row" style="margin-top:10px"><button class="btn pri" data-apact="check" data-ex="'+ex.id+'">Corrigir</button><button class="btn ghost" data-apact="add" data-ex="'+ex.id+'">+ Linha</button><button class="btn ghost" data-apact="clear" data-ex="'+ex.id+'">Limpar</button>'+(tries>=2&&!done?'<button class="btn ghost" data-apact="sol" data-ex="'+ex.id+'">Ver a solução</button>':'')+'</div>'+
+  (res?'<div class="ap-res '+(res.ok?'good':'bad')+'" role="status">'+(res.ok?'<b>Muito bem!</b> O lançamento está correto.':'<b>Ainda não está certo.</b> Veja as indicações em cada linha'+(res.miss.length?' e as pistas:':'.'))+
+    (res.msgs.length?'<ul class="lst">'+res.msgs.map(m=>'<li>'+esc(m[1])+'</li>').join('')+'</ul>':'')+
+    (!res.ok&&res.miss.length?'<ul class="lst">'+res.miss.map(h=>'<li>'+esc(h)+'</li>').join('')+'</ul>':'')+'</div>':'')+
+  (AP.showSol[ex.id]?'<div class="ap-sol"><b>Solução</b>'+apMini(ex.sol.map(s=>[s.c,s.d||0,s.k||0]))+'<p class="small muted" style="margin:6px 0 0">Copie a solução para a tabela e carregue em «Corrigir» para confirmar.</p></div>':'')+
+  '</div>';}
+function apMini(L){return '<table class="ap-mini"><thead><tr><th>Conta</th><th class="num">Débito</th><th class="num">Crédito</th></tr></thead><tbody>'+L.map(([c,d,k])=>'<tr><td><span class="code">'+esc(c)+'</span> '+esc(apName(c))+'</td><td class="num">'+(d?fmt(d):'')+'</td><td class="num">'+(k?fmt(k):'')+'</td></tr>').join('')+'</tbody></table>';}
+function apQuizHTML(l){
+  const p=apProg();
+  return '<div class="card"><h3>Teste rápido</h3>'+l.quiz.map((q,qi)=>{const a=AP.qa[q.id];const right=p.qz[q.id];
+    return '<fieldset class="ap-q"><legend>'+(qi+1)+'. '+esc(q.p)+'</legend>'+q.o.map((o,oi)=>{const cls=a!=null&&oi===a?(oi===q.r?' good':' bad'):(right&&oi===q.r?' good':'');return '<button class="ap-opt'+cls+'" data-apact="qz" data-q="'+q.id+'" data-o="'+oi+'"'+(right?' disabled':'')+'>'+esc(o)+'</button>';}).join('')+
+    (a!=null||right?'<p class="ap-fb '+((right||a===q.r)?'good':'bad')+'">'+((right||a===q.r)?'Certo. ':'Não é esta. Tente outra vez. ')+((right||a===q.r)?esc(q.e):'')+'</p>':'')+'</fieldset>';}).join('')+'</div>';}
+function vAprender(){
+  const ls=AP_MOD.lessons,p=apProg();
+  const aviso=S.pais!=='AO'?'<div class="card" style="border-left:4px solid var(--warn)"><p style="margin:0">Este primeiro módulo usa o <b>PGC de Angola</b>. Os módulos para '+esc(P().pais)+' e os outros países estão em preparação. Pode fazer este módulo na mesma: os princípios são iguais.</p></div>':'';
+  const l=AP.l&&apLesson(AP.l);
+  if(!l){
+    const tot=ls.reduce((a,x)=>a+apState(x).tot,0),done=ls.reduce((a,x)=>a+apState(x).done,0),pct=Math.round(100*done/tot);
+    const allOk=ls.every(x=>apState(x).ok);
+    return '<div class="top"><div><h2>Aprender</h2><div class="muted small">'+esc(AP_MOD.titulo)+'</div></div></div>'+aviso+
+    '<div class="card"><p style="margin-top:0">Cinco lições curtas, com exercícios práticos que a FinanDobra corrige na hora. Cada lição explica a regra, mostra um exemplo resolvido, propõe lançamentos para fazer e termina com um teste rápido. As contas são as do <b>'+esc(AP_MOD.ref)+'</b>, as mesmas que a aplicação usa.</p>'+
+    '<div class="row" style="align-items:center;gap:12px"><div class="progress" style="flex:1;min-width:140px" role="progressbar" aria-valuenow="'+pct+'" aria-valuemin="0" aria-valuemax="100"><div style="width:'+pct+'%"></div></div><b>'+pct+' %</b></div>'+
+    '<p class="small muted" style="margin-bottom:0">O seu progresso fica guardado '+(store.kind==='sb'?'neste navegador, associado à sua conta':'neste navegador')+'. Os exercícios não mexem nos dados da sua empresa.</p></div>'+
+    (allOk?'<div class="card ap-cert"><h3>Módulo concluído 🎉</h3><p style="margin:0">Concluiu as cinco lições do '+esc(AP_MOD.titulo)+'. Já sabe registar as operações principais de uma pequena empresa angolana. Experimente agora em «Registar operação», com a empresa de exemplo.</p><div class="row" style="margin-top:10px"><button class="btn" data-apact="print">Imprimir comprovativo</button></div></div>':'')+
+    '<div class="ap-list">'+ls.map((x,i)=>{const s=apState(x);const st=s.ok?'<span class="pill good">Concluída</span>':s.done?'<span class="pill">'+s.done+' de '+s.tot+'</span>':'<span class="pill">Por fazer</span>';
+      return '<button class="card ap-item" data-apact="open" data-l="'+x.id+'"><span class="ap-n">'+(i+1)+'</span><span class="ap-it"><b>'+esc(x.t)+'</b><span class="small muted">'+x.min+' min · '+x.ex.length+' exercícios · '+x.quiz.length+' perguntas</span></span>'+st+'</button>';}).join('')+'</div>'+
+    '<div class="card"><h3>Para professores e centros de formação</h3><p class="hint" style="margin:0">Em breve: turmas, distribuição de exercícios e acompanhamento dos resultados dos alunos. Se quiser usar a FinanDobra numa escola, fale connosco.</p></div>';}
+  const i=ls.indexOf(l),nx=ls[i+1],s=apState(l);
+  return '<div class="top"><div><button class="btn ghost sm" data-apact="back">← Todas as lições</button><h2 style="margin-top:8px">Lição '+(i+1)+' · '+esc(l.t)+'</h2><p class="muted" style="margin:4px 0 0">'+l.min+' min · '+s.done+' de '+s.tot+' tarefas feitas</p></div></div>'+aviso+
+  '<div class="grid ap-teo">'+l.teoria.map(([t,h])=>'<div class="card"><h3>'+esc(t)+'</h3><div class="ap-txt">'+h+'</div></div>').join('')+'</div>'+
+  '<div class="card ap-exemplo"><h3>Exemplo resolvido</h3><p style="margin-top:0">'+esc(l.exemplo.txt)+'</p>'+apMini(l.exemplo.L)+'<p class="hint" style="margin-bottom:0">'+esc(l.exemplo.nota)+'</p></div>'+
+  l.ex.map((e,k)=>apExHTML(e,k+1)).join('')+apQuizHTML(l)+
+  '<div class="row" style="justify-content:space-between;margin:6px 0 24px">'+(i>0?'<button class="btn" data-apact="open" data-l="'+ls[i-1].id+'">← Lição anterior</button>':'<span></span>')+(nx?'<button class="btn pri" data-apact="open" data-l="'+nx.id+'">Lição seguinte →</button>':'<button class="btn pri" data-apact="back">Ver o resumo do módulo</button>')+'</div>'+
+  '<datalist id="apAccList">'+apAccOpts()+'</datalist>';}
+function apAccOpts(){if(AP._opts)return AP._opts;const seen=new Set(),o=[];const add=(c,n)=>{if(seen.has(c))return;seen.add(c);o.push('<option value="'+esc(c)+'">'+esc(c+' '+n)+'</option>');};
+  try{for(const [c,n] of Object.values(PACKS.AO.acc))add(c,n);}catch(_){}try{for(const r of CAT_AO)add(r[1],r[2]);}catch(_){}return AP._opts=o.join('');}
+function apRefocus(sel){const el=document.querySelector(sel);if(el){el.focus();}}
+function apReplace(exId){const ex=AP_MOD.lessons.flatMap(l=>l.ex).find(x=>x.id===exId);const box=$('#ap-'+exId);if(ex&&box){const k=[...box.parentNode.querySelectorAll('.ap-ex')].indexOf(box)+1;box.outerHTML=apExHTML(ex,k);}}
+document.addEventListener('input',e=>{const t=e.target;if(!t.dataset||!t.dataset.apr)return;const [id,i,c]=t.dataset.apr.split(':');if(!AP.rows[id])return;AP.rows[id][+i][+c]=t.value;if(AP.res[id]){delete AP.res[id];const box=$('#ap-'+id);if(box)box.querySelectorAll('.ap-fb,.ap-res').forEach(x=>x.remove());}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-apact]');if(!b)return;const a=b.dataset.apact,id=b.dataset.ex;
+  if(a==='open'){AP.l=b.dataset.l;render();window.scrollTo(0,0);return;}
+  if(a==='back'){AP.l=null;render();window.scrollTo(0,0);return;}
+  if(a==='print'){window.print();return;}
+  if(a==='qz'){const q=AP_MOD.lessons.flatMap(l=>l.quiz).find(x=>x.id===b.dataset.q);if(!q)return;const o=+b.dataset.o;AP.qa[q.id]=o;if(o===q.r){apProg().qz[q.id]=1;apSave();}const y=window.scrollY;render();window.scrollTo(0,y);return;}
+  const ex=AP_MOD.lessons.flatMap(l=>l.ex).find(x=>x.id===id);if(!ex)return;
+  if(a==='add')AP.rows[id].push(['','','']);
+  else if(a==='del'){AP.rows[id].splice(+b.dataset.i,1);delete AP.res[id];}
+  else if(a==='clear'){delete AP.rows[id];delete AP.res[id];}
+  else if(a==='sol'){AP.showSol[id]=true;}
+  else if(a==='check'){const r=apCheck(ex);AP.res[id]=r;AP.tries[id]=(AP.tries[id]||0)+(r.ok?0:1);if(r.ok){apProg().ex[id]=1;apSave();toast('Exercício resolvido.');}}
+  apReplace(id);});
+
 function fillDatalists(){for(const c of ['clients','suppliers','other']){const el=$('#dl'+c);if(el)el.innerHTML=entities(c).map(x=>'<option value="'+esc(x.n)+'">').join('');}}
 function render(){
   applyPack();readRoute();
@@ -1875,7 +2066,7 @@ function render(){
   if(window.innerWidth<=820){const cur=document.querySelector('#nav a[aria-current]');const nav=$('#nav');if(cur&&nav)nav.scrollLeft=cur.offsetLeft-nav.clientWidth/2+cur.clientWidth/2;}
   $('#profToggle').checked=!!S.prof;fillCoSel();
   {const w=$('#who');if(w){if(store.kind==='sb'&&SB.user){w.hidden=false;w.innerHTML='<span class="muted">'+esc(SB.email())+(SB.known.has(S.cid)?' · '+esc(PAPEIS[meuPapel()]||''):'')+'</span> <button class="btn ghost sm" data-act="sbOut">Sair</button>';}else w.hidden=true;}}
-  const v={painel:vPainel,registar:vRegistar,diario:vDiario,razao:vRazao,terceiros:vTerceiros,demonstracoes:vDemo,fecho:vFecho,empresa:vEmpresa,comparar:vComparar,saft:vSaft,empresas:vEmpresas,exercicio:vExercicio,importar:vImportar,inicio:vInicio,plano:vPlano,admin:vAdmin}[route];
+  const v={painel:vPainel,registar:vRegistar,diario:vDiario,razao:vRazao,terceiros:vTerceiros,demonstracoes:vDemo,fecho:vFecho,empresa:vEmpresa,comparar:vComparar,saft:vSaft,empresas:vEmpresas,exercicio:vExercicio,importar:vImportar,inicio:vInicio,aprender:vAprender,plano:vPlano,admin:vAdmin}[route];
   $('#main').innerHTML=v();setStatus(statusTxt[0],statusTxt[1]);fillDatalists();
   if(route==='diario'&&dl){const x=$('#dlBtn');if(x)x.hidden=false;}
 }
