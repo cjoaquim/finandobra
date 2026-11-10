@@ -391,7 +391,7 @@ nav a[hidden]{display:none!important}
       <a href="#exercicio">Year-end close <span class="k">08</span></a>
       <a href="#empresa">Company and chart <span class="k">09</span></a>
       <a href="#saft" id="navSaft">SAF-T <span class="k">10</span></a>
-      <a href="#importar" id="navImp">Importar faturação <span class="k">11</span></a>
+      <a href="#importar" id="navImp">Import invoices <span class="k">11</span></a>
       <a href="#aprender">Learn <span class="k">13</span></a>
       <a href="#comparar" id="navComp">Porquê a FinanDobra <span class="k">12</span></a>
       <a href="#plano" id="navPlano" hidden>Plan and payment <span class="k">P</span></a>
@@ -498,7 +498,18 @@ const PACKS={
   ex:{empresa:'Comércio Atlântico Ltda. (exemplo)',nif:'00.000.000/0001-00',scale:0.01,cli:'Hotel Atlântico',forn:'Distribuidora Central',wh:0}}
 /*i18n-skip-end*/
 };
-const P=()=>PACKS[(typeof S!=='undefined'&&S&&S.pais)||'AO']||PACKS.AO;
+const PACK_EN={
+ AO:{pais:'Angola',ref:'PGC – Angola General Chart of Accounts (simplified; full chart available)',whLong:'Employment income tax (IRT)',irc:'Industrial Tax',ircNota:'Standard rate of 25% on taxable profit.',ivaNota:'Standard VAT rate of 14%.',R:'Income',G:'Expenses',RS:'income',GS:'expense',dr:'Income statement by nature',
+  cls:{1:'Fixed assets and investments',2:'Inventories',3:'Third parties',4:'Cash and bank',5:'Capital and reserves',6:'Income by nature',7:'Expenses by nature',8:'Results'}},
+ PT:{pais:'Portugal',ref:'SNC – Portuguese Accounting Standards System (simplified)',whLong:'IRS withholding tax',irc:'IRC (corporate income tax)',ircNota:'Standard rate of 19% in 2026 (SMEs: 15% on the first €50,000 of taxable profit), plus surcharges.',ivaNota:'Standard VAT rate of 23% on the mainland (22% in Madeira, 16% in the Azores).',R:'Income',G:'Expenses',RS:'income',GS:'expense',dr:'Income statement by nature',
+  cls:{1:'Cash and bank',2:'Receivables and payables',3:'Inventories and biological assets',4:'Investments',5:'Capital, reserves and retained earnings',6:'Expenses',7:'Income',8:'Results'}},
+ MZ:{pais:'Mozambique',ref:'PGC-NIRF – Mozambique chart of accounts based on IFRS (simplified)',whLong:'IRPS withholding (monthly tables)',irc:'IRPC (corporate income tax)',ircNota:'Standard rate of 32%.',ivaNota:'Standard VAT rate of 16% (reduced rate of 5% on some services).',R:'Income',G:'Expenses',RS:'income',GS:'expense',dr:'Income statement by nature',
+  cls:{1:'Cash and bank',2:'Inventories and biological assets',3:'Capital investments',4:'Receivables, payables, accruals and deferrals',5:'Equity',6:'Expenses and losses',7:'Income and gains',8:'Results'}},
+ BR:{pais:'Brazil',ref:'Usual chart of accounts (CPC) – Simples Nacional',whLong:'Income tax withheld at source (IRRF)',irc:'IRPJ/CSLL',ircNota:'Under Simples Nacional, IRPJ and CSLL are included in the DAS.',ivaNota:'Simples Nacional: no VAT shown on sales; the DAS is calculated every month on gross revenue.',R:'Revenue',G:'Expenses',RS:'revenue',GS:'expense',dr:'Income statement',bal:'Balance sheet',vn:'Gross revenue'}};
+const ACC_EN={fixed:'Office equipment',dep:'Accumulated depreciation – tangible assets',stock:'Goods for resale',clients:'Trade receivables',suppliers:'Trade payables',loans:'Bank loans',taxProfit:'Corporate income tax payable',wh:'Employee income tax withheld',vatDed:'VAT receivable (input VAT)',vatLiq:'VAT payable (output VAT)',vatApur:'VAT settlement',socSec:'Social security payable',staff:'Wages payable',other:'Other receivables and payables',bank:'Bank – current account',cash:'Cash',capital:'Share capital',reserves:'Legal reserves',retained:'Retained earnings',sales:'Sales – goods',services:'Services rendered',finInc:'Interest income',othInc:'Other operating income',cogs:'Cost of goods sold',wages:'Salaries and wages',wageCh:'Employer payroll costs',deprec:'Depreciation – tangible assets',fse:'Third-party supplies and services',taxes:'Taxes and fees',finCost:'Interest expense',othCost:'Other operating expenses',incomeTax:'Income tax expense',resLiq:'Net profit for the year',fgts:'FGTS payable',salesTax:'(−) Simples Nacional on revenue'};
+const ACC_EN_C={AO:{taxProfit:'Income tax payable (Industrial Tax)',wh:'IRT – employee tax withheld',socSec:'Social security payable (INSS)',bank:'Bank – current account (local currency)',cash:'Cash – petty cash'},PT:{taxProfit:'Corporate income tax payable (IRC)',wh:'Income tax withheld (IRS)',socSec:'Social security contributions payable'},MZ:{taxProfit:'Corporate income tax payable (IRPC)',wh:'Taxes withheld at source',socSec:'INSS contributions payable'},BR:{vatDed:'Recoverable taxes',vatLiq:'ICMS payable',vatApur:'Simples Nacional payable (DAS)',taxProfit:'IRPJ and CSLL payable',wh:'IRRF payable',socSec:'INSS payable',incomeTax:'IRPJ and CSLL',wageCh:'Payroll charges (FGTS)'}};
+function accEn(p){const o={};for(const [r,v] of Object.entries(p.acc)){const n=(ACC_EN_C[p.id]||{})[r]||ACC_EN[r];o[r]=n?[v[0],n,...v.slice(2)]:v;}return o;}
+const P=()=>{const p=PACKS[(typeof S!=='undefined'&&S&&S.pais)||'AO']||PACKS.AO;if(!EN||!PACK_EN[p.id])return p;return p._en||(p._en=Object.assign({},p,PACK_EN[p.id],{acc:accEn(p)}));};
 
 /* ============ Plano completo: catálogo do PGC de Angola ============ */
 // Fonte: plano de contas fornecido pelo utilizador (exportação de programa de contabilidade, 2026),
@@ -985,7 +996,7 @@ async function initStore(){
   render();
 }
 /* ============ Nível 3: Supabase (só ativo quando existe window.FD_SUPABASE) ============ */
-const SBW=['dono','contabilista','lancador'],SBM=['dono','contabilista'];
+const SBW=['own','contabilista','lancador'],SBM=['own','contabilista'];
 const SB={client:null,user:null,known:new Map(),ver:new Map(),
   on(){return !!(window.FD_SUPABASE&&window.FD_SUPABASE.url&&window.FD_SUPABASE.key&&window.supabase&&window.supabase.createClient);},
   init(){if(!this.client)this.client=window.supabase.createClient(window.FD_SUPABASE.url,window.FD_SUPABASE.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});return this.client;},
@@ -1010,7 +1021,7 @@ const SB={client:null,user:null,known:new Map(),ver:new Map(),
     const row={id:cid,nome:m.empresa||'Unnamed company',pais:PACKS[m.pais]?m.pais:'AO',nif:m.nif||null,exemplo:!!m.exemplo,lancamentos:0,criado_por:this.user.id};
     const r=await this.client.from('empresas').insert(row);
     if(r.error){const e=this.err(r.error,'empresa');if(e.code==='dup')e.message='This company already exists in another account. To copy it, create a new company.';throw e;}
-    this.known.set(cid,{nome:row.nome,pais:row.pais,nif:row.nif||'',exemplo:row.exemplo,n:0,papel:'dono'});
+    this.known.set(cid,{nome:row.nome,pais:row.pais,nif:row.nif||'',exemplo:row.exemplo,n:0,papel:'own'});
   },
   async setIdx(o){
     try{localStorage.setItem('fd.sb.cur.'+this.user.id,o.current||'');}catch(_){}
@@ -1018,7 +1029,7 @@ const SB={client:null,user:null,known:new Map(),ver:new Map(),
     for(const x of (o.list||[])){if(!x||!x.id)continue;ids.add(x.id);const k=this.known.get(x.id);if(!k)continue;
       const ch={};if(x.nome!==k.nome)ch.nome=x.nome;if(x.pais!==k.pais&&PACKS[x.pais])ch.pais=x.pais;if((x.nif||'')!==(k.nif||''))ch.nif=x.nif||null;if(!!x.exemplo!==k.exemplo)ch.exemplo=!!x.exemplo;if((x.n||0)!==k.n)ch.lancamentos=x.n||0;
       if(Object.keys(ch).length&&SBM.includes(k.papel)){const r=await this.client.from('empresas').update(ch).eq('id',x.id);if(!r.error)Object.assign(k,{nome:x.nome,pais:x.pais,nif:x.nif||'',exemplo:!!x.exemplo,n:x.n||0});}}
-    for(const [cid,k] of [...this.known])if(!ids.has(cid)&&k.papel==='dono'){const r=await this.client.from('empresas').delete().eq('id',cid);if(r.error)throw this.err(r.error,'delete company');this.known.delete(cid);}
+    for(const [cid,k] of [...this.known])if(!ids.has(cid)&&k.papel==='own'){const r=await this.client.from('empresas').delete().eq('id',cid);if(r.error)throw this.err(r.error,'delete company');this.known.delete(cid);}
   },
   async get(id){
     if(id==='idx')return this.getIdx();
@@ -1057,7 +1068,7 @@ const SB={client:null,user:null,known:new Map(),ver:new Map(),
 };
 const PAPEIS={dono:'Owner',contabilista:'Accountant',lancador:'Bookkeeper',aprovador:'Approver',consulta:'Viewer'};
 const PAPEL_TXT={dono:'everything, including managing the team and deleting the company',contabilista:'everything except managing the team and deleting the company',lancador:'record and correct entries and closings',aprovador:'view only (draft approval is coming in a future version)',consulta:'view only'};
-function meuPapel(){return store.kind==='sb'?SB.papel(S.cid):'dono';}
+function meuPapel(){return store.kind==='sb'?SB.papel(S.cid):'own';}
 function soLeitura(){return store.kind==='sb'&&SB.known.has(S.cid)&&(!SBW.includes(SB.papel(S.cid))||empInativa());}
 /* --- ecrã de entrada --- */
 /* ============ Página pública (antes de entrar) ============ */
@@ -1076,7 +1087,7 @@ function lpPlanos(){
   if(!LP.planos)return '<p class="hint">Loading plans…</p>';
   const p=LP.pais;
   return LP.planos.map(x=>{const pr=LP.precos.find(y=>y.plano_id===x.id&&y.pais===p);
-    const preco=x.id==='formacao'?'<div class="lp-preco">Free</div>':pr?'<div class="lp-preco">'+esc(moneyC(pr.mensal,pr.moeda))+'<small> / month</small></div><div class="small muted">ou '+esc(moneyC(pr.anual,pr.moeda))+' per year</div>':'<div class="small muted">Price on request</div>';
+    const preco=x.id==='formacao'?'<div class="lp-preco">Free</div>':pr?'<div class="lp-preco">'+esc(moneyC(pr.mensal,pr.moeda))+'<small> / month</small></div><div class="small muted">or '+esc(moneyC(pr.anual,pr.moeda))+' per year</div>':'<div class="small muted">Price on request</div>';
     return '<div class="lp-card lp-plan'+(x.id==='profissional'?' lp-dest':'')+'">'+(x.id==='profissional'?'<span class="lp-tag">Most popular</span>':'')+'<h3>'+esc(x.nome)+'</h3>'+preco+'<p>'+esc(x.descricao||'')+'</p><ul class="lst small">'+plFeat(x)+'</ul><button class="btn '+(x.id==='formacao'?'':'pri')+'" data-au="criar">'+(x.id==='formacao'?'Start free':'Create account')+'</button></div>';}).join('');
 }
 const LP_OPS=EN?[
@@ -1202,7 +1213,7 @@ function teamHTML(){
   if(store.kind!=='sb')return '';
   if(!SB.known.has(S.cid))return '<div class="card"><h3>Team</h3><p class="hint" style="margin:0">The open company is not saved to your account yet. Record an entry or create a company to invite people.</p></div>';
   if(team.cid!==S.cid||!team.list){if(!team.err)setTimeout(()=>loadTeam(),0);return '<div class="card"><h3>Team of '+esc(S.empresa||'')+'</h3><p class="hint">'+(team.err?'Could not read the team: '+esc(team.err):'Loading…')+'</p></div>';}
-  const dono=meuPapel()==='dono';const me=SB.email();
+  const dono=meuPapel()==='own';const me=SB.email();
   const rows=team.list.map(m=>'<tr><td>'+esc(m.email)+(m.email===me?' <span class="pill plain">eu</span>':'')+'</td><td>'+(dono&&m.email!==me?'<select data-tm="'+esc(m.email)+'">'+Object.keys(PAPEIS).map(k=>'<option value="'+k+'"'+(k===m.papel?' selected':'')+'>'+PAPEIS[k]+'</option>').join('')+'</select>':esc(PAPEIS[m.papel]||m.papel))+'</td><td style="text-align:right">'+(dono&&m.email!==me?'<button class="btn ghost sm danger" data-act="tmDel" data-e="'+esc(m.email)+'">Remove</button>':'')+'</td></tr>').join('');
   return '<div class="card"><h3>Team of '+esc(S.empresa||'')+'</h3><p class="hint" style="margin-top:0">Your role: <b>'+esc(PAPEIS[meuPapel()]||'—')+'</b> ('+esc(PAPEL_TXT[meuPapel()]||'')+').</p>'+
   '<div class="tbl-wrap"><table><thead><tr><th>Email</th><th>Role</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
@@ -1217,7 +1228,7 @@ document.addEventListener('click',async e=>{
     else if(act==='sbMig'){const o=localBackup();if(!o)return toast('There is no data in this browser.');try{localStorage.setItem('fd.sb.mig.'+SB.user.id,'1');}catch(_){}await restoreAll(o);}
   }catch(err){toast(err.code==='dup'?'That person is already on the team.':err.code==='limit'?err.message:err.code==='forbidden'?'Your role does not allow this action.':'Error: '+err.message);}
 });
-document.addEventListener('change',async e=>{const t=e.target;if(!t.dataset||!t.dataset.tm)return;try{await SB.setRole(S.cid,t.dataset.tm,t.value);logA('Role changed',t.dataset.tm+' → '+PAPEIS[t.value]);persist();await loadTeam(true);toast('Role changed.');}catch(err){toast(err.code==='forbidden'?'Your role does not allow this action.':String(err.message).includes('dono')?'The company must have at least one owner.':'Error: '+err.message);loadTeam(true);}});
+document.addEventListener('change',async e=>{const t=e.target;if(!t.dataset||!t.dataset.tm)return;try{await SB.setRole(S.cid,t.dataset.tm,t.value);logA('Role changed',t.dataset.tm+' → '+PAPEIS[t.value]);persist();await loadTeam(true);toast('Role changed.');}catch(err){toast(err.code==='forbidden'?'Your role does not allow this action.':String(err.message).includes('own')?'The company must have at least one owner.':'Error: '+err.message);loadTeam(true);}});
 function localBackup(){
   try{const ix=localStorage.getItem(LPFX+'idx');if(!ix)return null;const docs={idx:JSON.parse(ix).json};if(typeof docs.idx!=='string')return null;
     for(const k of Object.keys(localStorage))if(k.startsWith(LPFX+'emp_')){const v=JSON.parse(localStorage.getItem(k));if(v&&typeof v.json==='string')docs[k.slice(LPFX.length)]=v.json;}
@@ -1244,7 +1255,7 @@ function updNavPlano(){const a=$('#navPlano'),b=$('#navAdmin');if(a)a.hidden=sto
 function empInativa(){const e=PL.estado.get(S.cid);return store.kind==='sb'&&!!e&&e.ativa===false;}
 function empNaoOficial(){const e=PL.estado.get(S.cid);return store.kind==='sb'&&!!e&&e.oficial===false;}
 function plPodeCriar(){
-  const p=plAtual();if(!p)return true;const n=[...SB.known.values()].filter(k=>k.papel==='dono').length;
+  const p=plAtual();if(!p)return true;const n=[...SB.known.values()].filter(k=>k.papel==='own').length;
   if(n>=p.max_empresas){toast('The plan '+p.nome+' permite '+p.max_empresas+' empresa'+(p.max_empresas>1?'s':'')+'. To create more, change plan in “Plan and payment”.');location.hash='#plano';return false;}
   return true;
 }
@@ -1262,23 +1273,23 @@ function vPlano(){
   const top='<div class="top"><div><h2>Plan and payment</h2><div class="muted small">Choose your FinanDobra plan. It is activated once payment is confirmed.</div></div></div>';
   if(store.kind!=='sb')return top+'<div class="card"><p style="margin:0">Plans are available in the version with an account (with a server). In this version everything works without limits, with data saved in this browser.</p></div>';
   if(!PL.sub){if(!PL.loading&&!PL.err)setTimeout(()=>plLoad(),0);return top+'<div class="card"><p class="hint" style="margin:0">'+(PL.err?'Could not read the plans: '+esc(PL.err)+' <button class="btn sm" data-act="plRetry">Try again</button>':'Loading…')+'</p></div>';}
-  const s=PL.sub.sub||{},p=plAtual()||{},pais=ui.plPais||s.pais||S.pais||'AO';
-  const nDono=[...SB.known.values()].filter(k=>k.papel==='dono').length;
+  const s=PL.sub.sub||{},p=plAtual()||{},pais=ui.plPais||(PAIS_NOME[s.pais]?s.pais:null)||(PAIS_NOME[S.pais]?S.pais:null)||(EN?'INT':'AO');
+  const nDono=[...SB.known.values()].filter(k=>k.papel==='own').length;
   const venc=s.valido_ate&&s.plano_id!=='formacao'?Math.round((new Date(s.valido_ate+'T12:00:00Z')-new Date(todayStr()+'T12:00:00Z'))/864e5):null;
   let aviso='';
   if(s.plano_id!=='formacao'&&p.id==='formacao'&&s.valido_ate)aviso='<p class="err" style="margin:8px 0 0">The plan '+esc(plNome(s.plano_id))+' expired on '+dmy(s.valido_ate)+'. Renew to get every feature back.</p>';
   else if(venc!=null&&venc<0)aviso='<p class="err" style="margin:8px 0 0">Your plan ended on '+dmy(s.valido_ate)+'. You are in the 15-day grace period: renew so you don\'t lose access.</p>';
   else if(venc!=null&&venc<=15)aviso='<p class="warn" style="margin:8px 0 0">Your plan ends in '+venc+' dia'+(venc===1?'':'s')+'. You can request your renewal now.</p>';
-  const cur='<div class="card"><h3>Your plan: '+esc(p.nome||'—')+'</h3><ul class="lst" style="margin-bottom:0"><li>Companies: <b>'+nDono+' de '+(p.max_empresas||'—')+'</b> (companies you own)</li><li>Users per company: up to <b>'+(p.max_utilizadores||'—')+'</b>, including the owner</li><li>SAF-T export: <b>'+(p.oficial?'sim':'no')+'</b></li><li>Valid until: <b>'+(p.id==='formacao'?'no end date':dmy(s.valido_ate))+'</b></li></ul>'+aviso+'</div>';
+  const cur='<div class="card"><h3>Your plan: '+esc(p.nome||'—')+'</h3><ul class="lst" style="margin-bottom:0"><li>Companies: <b>'+nDono+' de '+(p.max_empresas||'—')+'</b> (companies you own)</li><li>Users per company: up to <b>'+(p.max_utilizadores||'—')+'</b>, including the owner</li>'+(EN?'':'<li>SAF-T export: <b>'+(p.oficial?'sim':'no')+'</b></li>')+'<li>Valid until: <b>'+(p.id==='formacao'?'no end date':dmy(s.valido_ate))+'</b></li></ul>'+aviso+'</div>';
   let ped='';
   if(s.pedido_plano){const pr=PL.precos.find(x=>x.plano_id===s.pedido_plano&&x.pais===s.pais);const ins=(PL.pag.find(x=>x.pais===s.pais)||{}).instrucoes||'Contact FinanDobra to find out how to pay.';const val=pr?(s.pedido_periodo==='anual'?pr.anual:pr.mensal):null;
     ped='<div class="card" style="border-color:var(--accent)"><h3>Order awaiting payment</h3><div class="fields"><div><div class="small muted">Plan</div><b>'+esc(plNome(s.pedido_plano))+' · '+(s.pedido_periodo==='anual'?'anual':'mensal')+'</b></div><div><div class="small muted">Amount</div><b>'+(val!=null?esc(moneyC(val,pr.moeda)):'—')+'</b></div><div><div class="small muted">Reference</div><b class="num">'+esc(s.referencia||'')+'</b></div></div><h4 style="margin:14px 0 4px">How to pay ('+esc(PAIS_NOME[s.pais]||s.pais)+')</h4><p style="margin:0;white-space:pre-line" class="pl-ins">'+ligar(ins,s.referencia)+'</p><p class="small muted">Ordered on '+dmy(s.pedido_em)+'. Activation happens once payment is confirmed, usually within 1 working day.</p><button class="btn ghost sm" data-act="plCancel">Cancel order</button></div>';}
   const cards=(PL.planos||[]).map(x=>{const pr=PL.precos.find(y=>y.plano_id===x.id&&y.pais===pais);const atual=x.id===p.id;
-    const preco=x.id==='formacao'?'<div class="pl-preco">Free</div>':pr?'<div class="pl-preco">'+esc(moneyC(pr.mensal,pr.moeda))+'<small> / month</small></div><div class="small muted">ou '+esc(moneyC(pr.anual,pr.moeda))+' / year'+(pr.anual<pr.mensal*12?' (save '+esc(moneyC(pr.mensal*12-pr.anual,pr.moeda))+')':'')+'</div>':'<div class="small muted">No price set for '+esc(PAIS_NOME[pais])+'.</div>';
-    const bt=atual?'<span class="pill good">Current plan</span>'+(x.id!=='formacao'&&pr?' <button class="btn sm" data-act="plPedir" data-p="'+x.id+'" data-per="anual">Renovar (anual)</button>':''):(x.id!=='formacao'&&pr?'<button class="btn pri sm" data-act="plPedir" data-p="'+x.id+'" data-per="mensal">Pedir · mensal</button> <button class="btn sm" data-act="plPedir" data-p="'+x.id+'" data-per="anual">Pedir · anual</button>':'');
+    const preco=x.id==='formacao'?'<div class="pl-preco">Free</div>':pr?'<div class="pl-preco">'+esc(moneyC(pr.mensal,pr.moeda))+'<small> / month</small></div><div class="small muted">or '+esc(moneyC(pr.anual,pr.moeda))+' / year'+(pr.anual<pr.mensal*12?' (save '+esc(moneyC(pr.mensal*12-pr.anual,pr.moeda))+')':'')+'</div>':'<div class="small muted">No price set for '+esc(PAIS_NOME[pais])+'.</div>';
+    const bt=atual?'<span class="pill good">Current plan</span>'+(x.id!=='formacao'&&pr?' <button class="btn sm" data-act="plPedir" data-p="'+x.id+'" data-per="anual">Renovar (anual)</button>':''):(x.id!=='formacao'&&pr?'<button class="btn pri sm" data-act="plPedir" data-p="'+x.id+'" data-per="mensal">Order · monthly</button> <button class="btn sm" data-act="plPedir" data-p="'+x.id+'" data-per="anual">Order · yearly</button>':'');
     return '<div class="card pl-card'+(atual?' pl-cur':'')+'"><h3 style="margin-bottom:2px">'+esc(x.nome)+'</h3>'+preco+'<p class="hint">'+esc(x.descricao||'')+'</p><ul class="lst small">'+plFeat(x)+'</ul><div class="row" style="gap:6px;flex-wrap:wrap">'+bt+'</div></div>';}).join('');
   return top+cur+ped+'<div class="row" style="margin:6px 0 10px;gap:10px;align-items:center"><h3 style="margin:0">Plans</h3><span class="spacer"></span><label class="small" for="plPais">Prices for<select id="plPais">'+Object.keys(PAIS_NOME).map(k=>'<option value="'+k+'"'+(k===pais?' selected':'')+'>'+PAIS_NOME[k]+'</option>').join('')+'</select></label></div><div class="pl-grid">'+cards+'</div>'+
-    '<div class="card"><h3>How it works</h3><ul class="lst" style="margin:0"><li>Limits count the companies you <b>dono</b>. In companies you were invited to, the owner\'s plan applies.</li><li>If your plan ends, you have 15 days\' grace. After that you go back to Learning: extra companies become view-only and can still be exported, but nothing is deleted. When you renew, everything becomes active again.</li><li>If you move to a smaller plan, the newest companies above the limit become view-only.</li></ul></div>';
+    '<div class="card"><h3>How it works</h3><ul class="lst" style="margin:0"><li>Limits count the companies you <b>own</b>. In companies you were invited to, the owner\'s plan applies.</li><li>If your plan ends, you have 15 days\' grace. After that you go back to Learning: extra companies become view-only and can still be exported, but nothing is deleted. When you renew, everything becomes active again.</li><li>If you move to a smaller plan, the newest companies above the limit become view-only.</li></ul></div>';
 }
 function vAdmin(){
   const top='<div class="top"><div><h2>Administration</h2><div class="muted small">Plan orders and subscriptions for all customers.</div></div><div class="ctl"><button class="btn sm" data-act="adLoad">Refresh</button></div></div>';
@@ -1303,7 +1314,7 @@ document.addEventListener('click',async e=>{
   const b=e.target.closest('[data-act^="pl"],[data-act^="ad"]');if(!b)return;const act=b.dataset.act;
   try{
     if(act==='plRetry'){PL.err=null;plLoad(true);render();}
-    else if(act==='plPedir'){const pais=ui.plPais||(PL.sub.sub||{}).pais||S.pais||'AO';b.disabled=true;const r=await SB.client.rpc('pedir_plano',{p_plano:b.dataset.p,p_periodo:b.dataset.per,p_pais:pais});if(r.error)throw SB.err(r.error,'pedido');await plLoad(true);window.scrollTo(0,0);toast('Order recorded. Reference '+(r.data&&r.data.referencia||'')+'.');}
+    else if(act==='plPedir'){const ps=(PL.sub.sub||{}).pais,pais=ui.plPais||(PAIS_NOME[ps]?ps:null)||(PAIS_NOME[S.pais]?S.pais:null)||(EN?'INT':'AO');b.disabled=true;const r=await SB.client.rpc('pedir_plano',{p_plano:b.dataset.p,p_periodo:b.dataset.per,p_pais:pais});if(r.error)throw SB.err(r.error,'pedido');await plLoad(true);window.scrollTo(0,0);toast('Order recorded. Reference '+(r.data&&r.data.referencia||'')+'.');}
     else if(act==='plCancel'){const r=await SB.client.rpc('cancelar_pedido');if(r.error)throw SB.err(r.error,'pedido');await plLoad(true);toast('Order cancelled.');}
     else if(act==='adLoad'){PL.adminList=null;render();adLoad();}
     else if(act==='adAtv'){const x=PL.adminList.find(y=>y.user_id===b.dataset.u);if(!x)return;const hoje=todayStr();const base=x.plano_id===x.pedido_plano&&x.valido_ate&&x.valido_ate>=hoje?x.valido_ate:hoje;const ate=isoAdd(base,x.pedido_periodo==='anual'?12:1);await adSet(x.user_id,x.pedido_plano,ate,'pedido '+(x.referencia||'')+' ('+x.pedido_periodo+')');toast(x.email+': '+plNome(x.pedido_plano)+' until '+dmy(ate)+'.');}
@@ -1355,7 +1366,7 @@ async function createCompany(nome,pais,nif,exemplo){
 }
 async function deleteCompany(cid){
   const co=IDX.list.find(x=>x.id===cid);if(!co)return;
-  if(store.kind==='sb'&&SB.known.has(cid)&&SB.papel(cid)!=='dono'){ui.confirmCoDel=null;render();return toast('Only the owner can delete the company.');}
+  if(store.kind==='sb'&&SB.known.has(cid)&&SB.papel(cid)!=='own'){ui.confirmCoDel=null;render();return toast('Only the owner can delete the company.');}
   let meta=null;try{const m=await sget('emp_'+cid);meta=m&&m.json?JSON.parse(m.json):null;}catch(_){}
   const ids=['emp_'+cid].concat(((meta&&meta.months)||[]).map(m=>'emp_'+cid+'_m'+m),((meta&&meta.logYears)||[]).map(y=>'emp_'+cid+'_log'+y));
   if(cid===S.cid)for(const e of S.entries)ids.push('emp_'+cid+'_m'+monthOf(e.date));
@@ -1403,6 +1414,7 @@ function vPainel(){
   const costs=RL().filter(a=>a.k==='G').map(a=>({c:a.c,v:nat(a.c,from,to)})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);const max=costs.length?costs[0].v:1;
   const num=numbering();const recent=S.entries.slice().sort((a,b)=>b.date.localeCompare(a.date)||num[b.id]-num[a.id]).slice(0,6);
   return topBar(S.empresa||'Your company','Summary of '+monthLabel(sel)+(S.nif?' · Tax ID '+esc(S.nif):''))+
+  (EN&&P().id!=='INT'?'<p class="hint" style="margin:-6px 0 0">This company uses the '+esc(P().pais)+' chart of accounts (codes from the official chart). You can <a href="#empresa">switch to the International chart</a> in “Company and chart”.</p>':'')+
   '<div class="card quick"><h3>What happened?</h3><form id="nlForm"><input type="text" id="nlIn" placeholder="E.g. '+esc(chips()[0])+'" autocomplete="off" aria-label="Describe the transaction"><button class="btn pri" type="submit">Suggest entry</button></form>'+
   '<div class="chips">'+chips().map(x=>'<button class="chip" data-act="nlx" data-x="'+esc(x)+'">'+esc(x)+'</button>').join('')+'</div>'+
   '<div class="hint">Amounts before VAT. On sales, services and purchases, VAT'+(S.iva?(EN?' at ':' de ')+fmt(S.ivaTaxa)+(EN?'%':' %'):'')+' is added automatically'+(S.iva?'':' (company marked as not registered for VAT)')+'.</div>'+
@@ -1586,9 +1598,10 @@ function packCard(){const p=P();const row=(a,b)=>'<tr><td class="muted">'+esc(a)
   row('Social security',p.ss+': employee '+fmt(p.ssT)+' %'+(p.id==='BR'?' (tabela progressiva 7,5 % a 14 %)':'')+', employer '+fmt(p.ssE)+' %'+(p.id==='BR'?' (incluída no DAS)':''))+(p.fgts?row('FGTS',fmt(p.fgts)+' % of pay, cost to the business'):'')+(p.simples?row('Simples Nacional','DAS mensal sobre a receita bruta; alíquota efetiva por omissão '+fmt(p.simples.rate)+' %'):'')+row('Income tax',p.irc+'. '+p.ircNota)+
   row('Terminology',p.R+' / '+p.G)+(p.valid?row('Chart validation',Object.values(p.acc).filter(x=>x[2]==='v').length+' de '+Object.keys(p.acc).length+' códigos confirmados em fontes do PGC-NIRF; os restantes estão marcados «?» no plano de contas.'):'')+row('Sample accounts',lab('clients')+' · '+lab('vatLiq')+' · '+lab('sales')+' · '+lab('cogs'))+
   '</tbody></table></div><p class="hint">Changing the country converts the account codes and names of every entry already recorded; the amounts do not change.</p>';}
+function enPackNote(){if(!EN||P().id==='INT')return '';return '<div class="card" style="border-left:4px solid var(--warn)"><p style="margin:0 0 8px"><b>This company uses the '+esc(P().pais)+' chart of accounts.</b> Here the accounts keep their '+esc(P().pais)+' codes, with English names. The official Portuguese names, SAF-T and invoice import are in the <a href="../" lang="pt">Portuguese version</a>.</p><p class="hint" style="margin:0 0 10px">If the company does not have to file in '+esc(P().pais)+', you can switch it to the International chart (IFRS for SMEs). Account codes change in every entry; amounts stay the same.</p><button class="btn" data-act="toIntl">Switch to International</button></div>';}
 function vEmpresa(){
-  return topBar('Company and chart of accounts','')+
-  '<div class="grid g2"><div class="card"><h3>Company details</h3><div class="fields"><label for="paisSel">Country (accounting and tax pack)<select id="paisSel">'+PLIST().map(p=>'<option value="'+p.id+'"'+(p.id===S.pais?' selected':'')+'>'+esc(p.pais)+' – '+esc(p.ref.split(' –')[0])+'</option>').join('')+'</select></label><label for="coIn">Name<input type="text" id="coIn" value="'+esc(S.empresa)+'" placeholder="Company name"></label><label for="nifIn">'+(P().id==='BR'?'CNPJ':'NIF')+'<input type="text" id="nifIn" value="'+esc(S.nif)+'"></label>'+
+  return topBar('Company and chart of accounts','')+enPackNote()+
+  '<div class="grid g2"><div class="card"><h3>Company details</h3><div class="fields"><label for="paisSel">Country (accounting and tax pack)<select id="paisSel">'+PLIST().map(p=>'<option value="'+p.id+'"'+(p.id===S.pais?' selected':'')+'>'+esc(p.pais)+' – '+esc(p.ref.split(' –')[0])+'</option>').join('')+'</select></label><label for="coIn">Name<input type="text" id="coIn" value="'+esc(S.empresa)+'" placeholder="Company name"></label><label for="nifIn">'+(P().id==='BR'?'CNPJ':'Tax ID')+'<input type="text" id="nifIn" value="'+esc(S.nif)+'"></label>'+
   '<label for="curSel">Currency<select id="curSel">'+Object.keys(CUR).map(k=>'<option value="'+k+'"'+(k===S.moeda?' selected':'')+'>'+k+' ('+CUR[k]+')</option>').join('')+'</select></label>'+
   (P().simples?'':'<label for="ivaTx">VAT rate (%)<input type="text" inputmode="decimal" class="amt" id="ivaTx" value="'+fmt(S.ivaTaxa)+'"></label>')+'</div>'+
   (P().simples?'<div class="fields" style="margin-top:12px"><label for="simplesTx">Simples Nacional effective rate (%)<input type="text" inputmode="decimal" class="amt" id="simplesTx" value="'+fmt(S.simplesRate!=null?S.simplesRate:P().simples.rate)+'"></label></div>':'')+(P().simples?'':'<label class="switch" style="margin-top:12px"><input type="checkbox" id="ivaOn"'+(S.iva?' checked':'')+'> Company registered for VAT (add VAT on sales and purchases)</label>')+
@@ -1755,7 +1768,7 @@ function vSaft0(){
    '<div class="row" style="margin-top:10px"><button class="btn pri" data-act="sfGen"'+(ck.err.length?' disabled':'')+'>Gerar SAF-T '+saftYear+'</button>'+(saftXml?'<button class="btn" data-act="sfDl" id="sfDlBtn"'+(dl?'':' hidden')+'>Descarregar XML</button><button class="btn" data-act="sfCopy">Copiar XML</button>':'')+'</div></div></div>'+
   (cfg.taxo?'<div class="card"><h3>3. Taxonomias SNC (obrigatórias no SAF-T PT)</h3><p class="hint" style="margin-top:0">Indique o código da taxonomia S (Portaria n.º 302/2016) para cada conta de movimento. Ficam guardados para os próximos ficheiros.</p><div class="tbl-wrap"><table class="small"><thead><tr><th>Account</th><th>Name</th><th>Taxonomia</th></tr></thead><tbody>'+
     gm.map(a=>'<tr><td class="code">'+esc(a.id)+'</td><td>'+esc(a.desc)+'</td><td><input type="text" inputmode="numeric" data-tx="'+a.role+'" value="'+esc(sa.taxo[a.role]||'')+'" style="width:90px" aria-label="Taxonomia da conta '+esc(a.id)+'"></td></tr>').join('')+'</tbody></table></div></div>':'')+
-  (allEnts.length?'<div class="card"><h3>'+(cfg.taxo?'4':'3')+'. Customer and supplier tax IDs</h3><div class="tbl-wrap"><table class="small"><thead><tr><th>Code</th><th>Party</th><th>Account</th><th>NIF</th></tr></thead><tbody>'+
+  (allEnts.length?'<div class="card"><h3>'+(cfg.taxo?'4':'3')+'. Customer and supplier tax IDs</h3><div class="tbl-wrap"><table class="small"><thead><tr><th>Code</th><th>Party</th><th>Account</th><th>Tax ID</th></tr></thead><tbody>'+
     allEnts.map(x=>'<tr><td class="code">'+x.id+'</td><td>'+esc(x.name)+'</td><td class="code">'+esc(code(x.role))+'</td><td><input type="text" data-nif="'+esc(x.key)+'" value="'+esc(sa.nifs[x.key]||'')+'" style="width:140px" aria-label="NIF de '+esc(x.name)+'"></td></tr>').join('')+'</tbody></table></div></div>':'')+
   (saftXml?'<div class="card"><div class="row" style="margin-bottom:8px"><h3>Pré-visualização do ficheiro</h3><span class="spacer"></span><span class="muted small">'+fmt(saftXml.length/1024)+' KB · '+saftXml.split('\n').length+' linhas</span></div><pre class="xml">'+esc(saftXml.split('\n').slice(0,40).join('\n'))+(saftXml.split('\n').length>40?'\n…':'')+'</pre></div>':'')+
   '<div class="card"><h3>Antes de submeter</h3><ul class="lst"><li>Valide sempre o ficheiro no '+esc(cfg.validador)+' antes de o entregar.</li><li>O plano de contas da FinanDobra é simplificado: confirme que os códigos correspondem ao plano da empresa.</li><li>A FinanDobra não é um software certificado. Este ficheiro destina-se a apoiar o cumprimento da obrigação e deve ser revisto pelo contabilista responsável.</li></ul></div>';
@@ -1816,6 +1829,7 @@ function removeSub(r){
   const q=subRec(r);const cd=code(r);S.subs=S.subs.filter(x=>x.id!==r);applyPack();logA('Sub-account removed',cd+' '+(q?q.name:''));commit('Sub-account removed.');
 }
 /* ============ Fecho do exercício ============ */
+const IR_EN={AO:'Industrial Tax: standard rate of 25%.',PT:'IRC 2026: 19%; SMEs: 15% on the first €50,000 of taxable profit. Municipal surcharge up to 1.5%.',MZ:'IRPC: standard rate of 32%.',BR:'Under Simples Nacional, IRPJ and CSLL are included in the DAS. For Lucro Presumido or Real, check the rate with your accountant.'};
 const IR={INT:{rate:0,pme:false,res:0,nota:'Enter the corporate income tax rate that applies in your country.'},BR:{rate:0,pme:false,res:0,nota:'No Simples Nacional, o IRPJ e a CSLL estão incluídos no DAS. Para Lucro Presumido ou Real, indique a taxa com o contabilista.'},AO:{rate:25,pme:false,res:0,nota:'Imposto Industrial: taxa geral de 25 %.'},PT:{rate:19,pme:true,res:5,nota:'IRC 2026: 19 %; PME: 15 % nos primeiros 50.000 € de matéria coletável. Derrama municipal até 1,5 %.'},MZ:{rate:32,pme:false,res:0,nota:'IRPC: taxa geral de 32 %.'}};
 let exYear=null;
 function exYears(){const y=new Set(S.entries.map(e=>e.date.slice(0,4)));return [...y].sort().reverse();}
@@ -1833,7 +1847,7 @@ function monthsOf(y){return Array.from({length:12},(_,i)=>y+'-'+String(i+1).padS
 function vExercicio(){
   const ys=exYears();if(!ys.length)return '<div class="top"><h2>Year-end close</h2></div><div class="empty">No entries yet.</div>';
   if(!exYear||!ys.includes(exYear))exYear=ys.find(y=>!(S.exercicios&&S.exercicios[y]&&S.exercicios[y].fechado))||ys[0];
-  const y=exYear,x=EX(y),y1=y+'-12-31',ny=String(+y+1),ir=IR[S.pais]||IR.AO;
+  const y=exYear,x=EX(y),y1=y+'-12-31',ny=String(+y+1),ir=Object.assign({},IR[S.pais]||IR.AO,EN&&IR_EN[S.pais]?{nota:IR_EN[S.pais]}:{});
   const withEntries=monthsOf(y).filter(m=>S.entries.some(e=>monthOf(e.date)===m));
   const openM=withEntries.filter(m=>!isClosed(m+'-01'));
   const decAm=!S.bens.length||S.entries.some(e=>e.tpl==='amort'&&e.mes===y+'-12');
@@ -1848,7 +1862,7 @@ function vExercicio(){
   '<div class="card"><div class="check">'+
   // 1 verificações
   '<div class="step">'+st(Math.abs(TD-TC)<0.01&&decAm&&decIva,1)+'<div class="body"><h3>Checks</h3><ul class="lst small">'+
-   '<li class="'+(Math.abs(TD-TC)<0.01?'okmsg':'err')+'">Trial balance '+(Math.abs(TD-TC)<0.01?'equilibrado':'desequilibrado')+' ('+fmt(TD)+' / '+fmt(TC)+')</li>'+
+   '<li class="'+(Math.abs(TD-TC)<0.01?'okmsg':'err')+'">Trial balance '+(Math.abs(TD-TC)<0.01?'balanced':'desequilibrado')+' ('+fmt(TD)+' / '+fmt(TC)+')</li>'+
    '<li style="color:'+(decAm?'var(--good)':'var(--warn)')+'">December depreciation '+(decAm?'recorded':'not recorded yet (Month-end close)')+'</li>'+
    '<li style="color:'+(decIva?'var(--good)':'var(--warn)')+'">December VAT '+(decIva?'apurado':'not settled yet (Month-end close)')+'</li>'+
    '<li style="color:'+(openM.length?'var(--warn)':'var(--good)')+'">'+(openM.length?openM.length+' month(s) with entries still open: they will be closed in step 4':'All months with entries are closed')+'</li></ul></div></div>'+
@@ -1963,9 +1977,9 @@ function impGuia(){
    '<li><b>Se o contabilista não tem acesso:</b> peça ao cliente para criar um utilizador de consulta para o contabilista no programa de faturação, ou para enviar o ficheiro .xml todos os meses.</li></ul></div>';
 }
 function vImportar(){
-  if(S.pais==='BR')return '<div class="top"><div><h2>Importar faturação</h2></div></div><div class="card"><h3>Brasil</h3><p>No Brasil, as vendas são documentadas em NF-e, NFC-e e NFS-e (XML próprios, não SAF-T). A importação desses ficheiros ainda não está disponível. Por agora, registe as vendas em «Registar operação» ou com as frases do Painel.</p></div>';
+  if(S.pais==='BR')return '<div class="top"><div><h2>Import invoices</h2></div></div><div class="card"><h3>Brasil</h3><p>No Brasil, as vendas são documentadas em NF-e, NFC-e e NFS-e (XML próprios, não SAF-T). A importação desses ficheiros ainda não está disponível. Por agora, registe as vendas em «Registar operação» ou com as frases do Painel.</p></div>';
   const head='<div class="top"><div><h2>Importar faturação (SAF-T)</h2><div class="muted small">Traga as faturas, notas de crédito e recibos emitidos no software de faturação certificado. O lançamento contabilístico é criado automaticamente.</div></div></div>';
-  let body='<div class="card"><h3>1. Escolher o ficheiro</h3><p class="hint" style="margin-top:0">Ficheiro SAF-T de faturação (.xml) exportado do Cegid Primavera, PHC, Vendus ou outro software certificado. Aceita SAF-T (AO) e SAF-T (PT).</p><input type="file" id="impFile" multiple accept=".xml,text/xml,application/xml"> <span class="small muted">Pode escolher vários ficheiros de uma vez (por exemplo, um por mês).</span>'+(imp&&imp.files&&imp.files.length?'<div class="tbl-wrap" style="margin-top:10px"><table class="small"><thead><tr><th>Ficheiro</th><th>Company</th><th>NIF</th><th>Period</th><th class="n">Faturas</th><th class="n">Recibos</th></tr></thead><tbody>'+imp.files.map(f=>'<tr><td>'+esc(f.name)+'</td>'+(f.err?'<td colspan="5" class="err">'+esc(f.err)+'</td>':'<td>'+esc(f.nome||'—')+'</td><td class="num" style="text-align:left">'+esc(f.nif||'—')+(f.nif&&S.nif&&f.nif.replace(/\s/g,'')!==String(S.nif).replace(/\s/g,'')?' <span class="err">≠ empresa</span>':'')+'</td><td class="num" style="text-align:left">'+(f.de?dateLabel(f.de)+' a '+dateLabel(f.ate):'—')+'</td><td class="n">'+f.n+'</td><td class="n">'+f.np+'</td>')+'</tr>').join('')+'</tbody></table></div>':'')+(imp&&imp.err?'<p class="err">'+esc(imp.err)+'</p>':'')+'</div>';
+  let body='<div class="card"><h3>1. Escolher o ficheiro</h3><p class="hint" style="margin-top:0">Ficheiro SAF-T de faturação (.xml) exportado do Cegid Primavera, PHC, Vendus ou outro software certificado. Aceita SAF-T (AO) e SAF-T (PT).</p><input type="file" id="impFile" multiple accept=".xml,text/xml,application/xml"> <span class="small muted">Pode escolher vários ficheiros de uma vez (por exemplo, um por mês).</span>'+(imp&&imp.files&&imp.files.length?'<div class="tbl-wrap" style="margin-top:10px"><table class="small"><thead><tr><th>Ficheiro</th><th>Company</th><th>Tax ID</th><th>Period</th><th class="n">Faturas</th><th class="n">Recibos</th></tr></thead><tbody>'+imp.files.map(f=>'<tr><td>'+esc(f.name)+'</td>'+(f.err?'<td colspan="5" class="err">'+esc(f.err)+'</td>':'<td>'+esc(f.nome||'—')+'</td><td class="num" style="text-align:left">'+esc(f.nif||'—')+(f.nif&&S.nif&&f.nif.replace(/\s/g,'')!==String(S.nif).replace(/\s/g,'')?' <span class="err">≠ empresa</span>':'')+'</td><td class="num" style="text-align:left">'+(f.de?dateLabel(f.de)+' a '+dateLabel(f.ate):'—')+'</td><td class="n">'+f.n+'</td><td class="n">'+f.np+'</td>')+'</tr>').join('')+'</tbody></table></div>':'')+(imp&&imp.err?'<p class="err">'+esc(imp.err)+'</p>':'')+'</div>';
   if(imp&&imp.d){const d=imp.d,o=imp.opt;const rows=importPlan(d,o);const ok=rows.filter(r=>!r.skip);
     const mism=d.nif&&S.nif&&d.nif.replace(/\s/g,'')!==String(S.nif).replace(/\s/g,'');
     const sum=(arr,f)=>arr.reduce((s,r)=>s+f(r),0);const invs=ok.filter(r=>r.kind==='inv');
@@ -2009,7 +2023,7 @@ function impGo(){
 
 /* ============ Início (apresentação da app) ============ */
 const APP_VER=EN?'0.18 · 10 November 2026':'0.18 · 10 de novembro de 2026';
-const PLIST=()=>Object.values(PACKS).filter(p=>EN?p.id==='INT':p.id!=='INT');
+const PLIST=()=>Object.values(PACKS).filter(p=>EN?(p.id==='INT'||(typeof S!=='undefined'&&S&&p.id===S.pais)):p.id!=='INT').map(p=>EN&&PACK_EN[p.id]?Object.assign({},p,PACK_EN[p.id]):p);
 const PAIS_RES={INT:'VAT, GST or sales tax at your rate, payroll withholdings',AO:'IVA 14 %, IRT, INSS, Imposto Industrial, SAF-T (AO)',PT:'IVA 23 %, IRS, Segurança Social, IRC, SAF-T (PT)',MZ:'IVA 16 %, IRPS, INSS, IRPC',BR:'DAS, INSS, IRRF, FGTS'};
 function demoPhrase(){const x=P().ex,v=n=>fmt(n*x.scale);if(EN)return 'Sold '+v(300000)+' on credit to customer '+x.cli+', cost '+v(180000);return 'Vendi '+v(300000)+' ao cliente '+x.cli+' a crédito, custo '+v(180000);}
 function vInicio(){
@@ -2056,14 +2070,14 @@ function fillCoSel(){const el=$('#coSel');if(!el)return;const list=IDX.list.slic
   el.innerHTML=list.map(x=>'<option value="'+esc(x.id)+'"'+(x.id===S.cid?' selected':'')+'>'+esc(x.id===S.cid?(S.empresa||x.nome):x.nome)+'</option>').join('')+'<option value="__new">+ New company…</option><option value="__manage">Manage companies…</option>';}
 function vEmpresas(){
   const list=IDX.list.slice();const inIdx=list.some(x=>x.id===S.cid);
-  const rows=(inIdx?list:[Object.assign(idxEntry(),{nome:(S.empresa||'Company')+' (not saved yet)'})].concat(list)).map(x=>{const cur=x.id===S.cid;const n=cur?S.entries.length:x.n;const xp=store.kind==='sb'?SB.papel(x.id):null;const pp=xp&&xp!=='dono'?' <span class="pill plain">'+esc(PAPEIS[xp]||xp)+'</span>':'';
+  const rows=(inIdx?list:[Object.assign(idxEntry(),{nome:(S.empresa||'Company')+' (not saved yet)'})].concat(list)).map(x=>{const cur=x.id===S.cid;const n=cur?S.entries.length:x.n;const xp=store.kind==='sb'?SB.papel(x.id):null;const pp=xp&&xp!=='own'?' <span class="pill plain">'+esc(PAPEIS[xp]||xp)+'</span>':'';
     return '<tr><td><b>'+esc(cur?(S.empresa||x.nome):x.nome)+'</b> '+(cur?'<span class="pill good">aberta</span>':'')+(x.exemplo?' <span class="pill plain">exemplo</span>':'')+pp+'</td><td>'+esc((PACKS[x.pais]||PACKS.AO).pais)+'</td><td class="num" style="text-align:left">'+esc(cur?S.nif:x.nif)+'</td><td class="n">'+fmt(n)+'</td><td class="num" style="text-align:left">'+esc((x.updated||'').slice(0,10))+'</td><td style="white-space:nowrap;text-align:right">'+
     (cur?'':'<button class="btn sm" data-act="coOpen" data-id="'+esc(x.id)+'">Open</button> ')+
-    (ui.confirmCoDel===x.id?'<span class="small err">Delete all data for this company?</span> <button class="btn sm" data-act="coDelNo">No</button> <button class="btn sm danger" data-act="coDelYes" data-id="'+esc(x.id)+'">Yes, delete</button>':((inIdx||!cur)&&!(xp&&xp!=='dono')?'<button class="btn ghost sm danger" data-act="coDel" data-id="'+esc(x.id)+'">Delete</button>':''))+'</td></tr>';}).join('');
-  const nf=ui.newCo?'<div class="card"><h3>New company</h3><div class="fields"><label for="ncNome">Name<input type="text" id="ncNome" placeholder="E.g. Harbour Trading Ltd."></label><label for="ncPais">Country<select id="ncPais">'+PLIST().map(p=>'<option value="'+p.id+'"'+(p.id===S.pais?' selected':'')+'>'+esc(p.pais)+' – '+esc(p.ref.split(' –')[0])+'</option>').join('')+'</select></label><label for="ncNif">NIF<input type="text" id="ncNif"></label></div>'+
+    (ui.confirmCoDel===x.id?'<span class="small err">Delete all data for this company?</span> <button class="btn sm" data-act="coDelNo">No</button> <button class="btn sm danger" data-act="coDelYes" data-id="'+esc(x.id)+'">Yes, delete</button>':((inIdx||!cur)&&!(xp&&xp!=='own')?'<button class="btn ghost sm danger" data-act="coDel" data-id="'+esc(x.id)+'">Delete</button>':''))+'</td></tr>';}).join('');
+  const nf=ui.newCo?'<div class="card"><h3>New company</h3><div class="fields"><label for="ncNome">Name<input type="text" id="ncNome" placeholder="E.g. Harbour Trading Ltd."></label><label for="ncPais">Country<select id="ncPais">'+PLIST().map(p=>'<option value="'+p.id+'"'+(p.id===S.pais?' selected':'')+'>'+esc(p.pais)+' – '+esc(p.ref.split(' –')[0])+'</option>').join('')+'</select></label><label for="ncNif">Tax ID<input type="text" id="ncNif"></label></div>'+
     '<label class="switch" style="margin-top:10px"><input type="checkbox" id="ncEx"> Start with sample data (for practice or classes)</label><div class="row" style="margin-top:12px"><span class="spacer"></span><button class="btn" data-act="coNewNo">Cancel</button><button class="btn pri" data-act="coCreate">Create company</button></div></div>':'';
   return '<div class="top"><div><h2>Companies</h2><div class="muted small">Each company has its own books, chart of accounts and closings.</div></div><div class="ctl">'+(ui.newCo?'':'<button class="btn pri" data-act="coNew">+ New company</button>')+'</div></div>'+nf+
-  '<div class="card"><div class="tbl-wrap"><table><thead><tr><th>Company</th><th>Country</th><th>NIF</th><th class="n">Entries</th><th>Updated</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'+
+  '<div class="card"><div class="tbl-wrap"><table><thead><tr><th>Company</th><th>Country</th><th>Tax ID</th><th class="n">Entries</th><th>Updated</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'+
   teamHTML()+(store.kind==='sb'&&localBackup()&&!(()=>{try{return localStorage.getItem('fd.sb.mig.'+SB.user.id);}catch(_){return null;}})()?'<div class="card"><h3>Data in this browser</h3><p class="hint" style="margin-top:0">Este navegador tem empresas guardadas da versão anterior (sem conta). Pode passá-las para a sua conta; os dados do navegador ficam como estão.</p><button class="btn pri" data-act="sbMig">Move it to my account</button></div>':'')+
   '<div class="card"><h3>Backup</h3><p class="hint" style="margin-top:0">'+(store.kind!=='local'?'Your data is in your account. Even so, keep a monthly copy outside the app.':'<b>Warning:</b> right now your data is stored only in this browser. If you clear the browser or change computer, you lose it. Download a copy regularly (for example, at each month-end).')+(()=>{let t=null;try{t=localStorage.getItem('fd.bk');}catch(_){}return t?' Last copy: '+esc(t.slice(0,10).split('-').reverse().join('/'))+'.':' You have not made a copy yet.';})()+'</p><div class="row"><button class="btn pri" data-act="bkDl">Download copy (all companies)</button><label class="btn" for="bkIn" style="cursor:pointer">Restore from a copy…</label><input type="file" id="bkIn" accept=".json,application/json" hidden></div><p class="small muted" style="margin-bottom:0">Restoring adds the companies in the backup; a company that already exists is replaced by the version in the backup.</p></div>'+
   '<div class="card"><h3>How your data is stored</h3><ul class="lst"><li>'+(store.kind==='sb'?'Each company is stored separately on the FinanDobra server and is visible only to its team members.':'Each company is stored separately and privately in your account'+(store.kind==='db'?'':' (right now, only in this browser)')+'.')+'</li><li>Each year is split into monthly parts: the limit is per month (about 600 entries a month), not per book. There is no limit on the number of years.</li><li>Only the parts that change are saved, which makes recording faster.</li><li>The change log is kept by year, up to 2,000 records a year.</li></ul></div>';
@@ -2318,7 +2332,7 @@ function render(){
   applyPack();readRoute();
   document.querySelectorAll('#nav a').forEach(a=>{if(a.getAttribute('href')==='#'+route)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
   if(window.innerWidth<=820){const cur=document.querySelector('#nav a[aria-current]');const nav=$('#nav');if(cur&&nav)nav.scrollLeft=cur.offsetLeft-nav.clientWidth/2+cur.clientWidth/2;}
-  {const intl=P().id==='INT';for(const [id,h] of [['navSaft',intl],['navImp',intl],['navComp',EN]]){const el=$('#'+id);if(el)el.hidden=h;}if((intl&&(route==='saft'||route==='importar'))||(EN&&route==='comparar')){location.hash='#painel';return;}}
+  {const intl=P().id==='INT';for(const [id,h] of [['navSaft',intl||EN],['navImp',intl||EN],['navComp',EN]]){const el=$('#'+id);if(el)el.hidden=h;}if(((intl||EN)&&(route==='saft'||route==='importar'))||(EN&&route==='comparar')){location.hash='#painel';return;}}
   $('#profToggle').checked=!!S.prof;fillCoSel();
   {const w=$('#who');if(w){if(store.kind==='sb'&&SB.user){w.hidden=false;w.innerHTML='<span class="muted">'+esc(SB.email())+(SB.known.has(S.cid)?' · '+esc(PAPEIS[meuPapel()]||''):'')+'</span> <button class="btn ghost sm" data-act="sbOut">Log out</button>';}else w.hidden=true;}}
   const v={painel:vPainel,registar:vRegistar,diario:vDiario,razao:vRazao,terceiros:vTerceiros,demonstracoes:vDemo,fecho:vFecho,empresa:vEmpresa,comparar:vComparar,saft:vSaft,empresas:vEmpresas,exercicio:vExercicio,importar:vImportar,inicio:vInicio,aprender:vAprender,plano:vPlano,admin:vAdmin}[route];
@@ -2357,7 +2371,7 @@ document.addEventListener('change',e=>{
   if(t.id==='coIn'){S.empresa=t.value.trim();commit('Name saved.');}
   if(t.id==='nifIn'){S.nif=t.value.trim();commit();}
   if(t.id==='curSel'){S.moeda=t.value;commit();}
-  if(t.id==='paisSel'){if(XC().length&&t.value!=='AO'){t.value=S.pais;return toast('Esta empresa tem contas do PGC de Angola ativadas. Para usar outro país, crie uma empresa nova.');}S.pais=t.value;const p=P();S.moeda=p.moeda;S.ivaTaxa=p.iva;S.iva=p.iva>0;applyPack();commit('Pack for '+p.pais+' aplicado: '+p.ref.split(' (')[0]+'.');}
+  if(t.id==='paisSel'){if(EN&&t.value!=='INT'&&t.value!==S.pais){t.value=S.pais;return;}if(XC().length&&t.value!=='AO'){t.value=S.pais;return toast('Esta empresa tem contas do PGC de Angola ativadas. Para usar outro país, crie uma empresa nova.');}S.pais=t.value;const p=P();S.moeda=p.moeda;S.ivaTaxa=p.iva;S.iva=p.iva>0;applyPack();commit('Pack for '+p.pais+' aplicado: '+p.ref.split(' (')[0]+'.');}
   if(t.id==='ivaTx'){const v=parseAmount(t.value);if(v>=0){S.ivaTaxa=v;commit();}}
   if(t.id==='simplesTx'){const v=parseAmount(t.value);if(v>=0){S.simplesRate=v;commit();}}
   if(t.id==='ivaOn'){S.iva=t.checked;commit();}
@@ -2380,6 +2394,7 @@ document.addEventListener('click',async e=>{
   if(act==='nlx')runNL(b.dataset.x);
   else if(act==='propCancel'){ui.proposal=null;render();}
   else if(act==='propOk'){const p=ui.proposal;const miss=p.lines.find(l=>A[l.a].ent&&!String(l.e||'').trim());if(miss&&!p.warnedEnt){p.warnedEnt=1;return toast('Party name missing on account '+code(miss.a)+'. Click again to record it without a name.');}if(addEntry(p)){ui.proposal=null;render();}}
+  else if(act==='toIntl'){const sel=$('#paisSel');if(sel){sel.value='INT';sel.dispatchEvent(new Event('change',{bubbles:true}));}}
   else if(act==='tpl'){ui.tpl=b.dataset.k;ui.vals={};render();}
   else if(act==='tplOk'){const t=TPL[ui.tpl],v=collectVals(),o=t.b(v);if(o.err)return toast(o.err);if(addEntry({date:v.date,desc:o.desc,doc:v.doc,lines:o.lines,tpl:ui.tpl,extra:o.extra,bem:o.bem})){ui.vals={};render();}}
   else if(act==='mAdd'){ui.manual.lines.push({a:leaf('othCost'),d:'',c:'',e:''});render();}
